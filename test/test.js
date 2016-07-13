@@ -72,3 +72,23 @@ describe('Player.init()', function() {
     $elem.remove();
   });
 });
+
+describe('Player.load()', function() {
+  it('appends a <source> element to the <audio> of the player', function() {
+    var TEMPLATE = `
+      <div data-player>
+        <audio data-audio></audio>
+      </div>
+    `;
+    var $elem = $(TEMPLATE).appendTo('body');
+    var p = new Player('[data-player]');
+    p.init();
+    p.load('test.mp3');
+
+    var $source = $elem.find('source');
+    expect($source).to.have.length(1);
+    expect($source).to.have.attr('src', 'test.mp3');
+
+    $elem.remove();
+  });
+});

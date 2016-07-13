@@ -56,6 +56,29 @@ Player.prototype.init = function() {
   }
 }
 
+/**
+ * Loads an audio file. The audio can be set to automatically play once enough of it has loaded.
+ * @param {String} source - URL to the audio source.
+ * @param {Boolean} autoplay [false] - If `true`, the audio will auto-play after being loaded.
+ */
+Player.prototype.load = function(source, autoplay) {
+  // Create a <source> element for the <audio>
+  var sourceElement = document.createElement('source');
+  sourceElement.setAttribute('src', source);
+  this.ui.audio[0].appendChild(sourceElement);
+
+  // Auto-play if set to
+  if (autoplay) {
+    this.ui.audio.on('loadeddata.vivaldi', function() {
+      Player.play();
+    });
+  }
+}
+
+Player.prototype.play = function() {
+  
+}
+
 $.fn.vivaldi = function() {}
 $.fn.vivaldi.Player = Player;
 
