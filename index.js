@@ -37,7 +37,22 @@ Player.prototype.init = function() {
   // Find and store UI elements
   for (var i in PLAYER_UI) {
     var attr = PLAYER_UI[i];
-    this.ui[attr] = this.$player.find('data-'+attr);
+    var $elem = this.$player.find('[data-'+attr+']');
+
+    if ($elem.length > 0) {
+      this.ui[attr] = $elem;
+    }
+  }
+
+  // The data-audio element is required
+  if ('audio' in this.ui) {
+    // And it has to be <audio>
+    if (this.ui['audio'][0].nodeName !== 'AUDIO') {
+      throw new Error('Vivaldi Error: the data-audio element must be <audio>.');
+    }
+  }
+  else {
+    throw new Error('Vivaldi Error: player is missing an <audio data-audio> element.');
   }
 }
 

@@ -45,5 +45,30 @@ describe('Player.init()', function() {
       'seeker',
       'seeker-fill'
     ]);
+    expect(p.ui.audio).to.be.instanceOf(jQuery);
+
+    $elem.remove();
+  });
+
+  it('throws an error if the data-audio element does not exist', function() {
+    var $elem = $('<div data-player></div>').appendTo('body');
+    var p = new Player('[data-player]');
+
+    expect(function() {
+      p.init();
+    }).to.throw(Error);
+
+    $elem.remove();
+  });
+
+  it('throws an error if the data-audio element is not <audio>', function() {
+    var $elem = $('<div data-player><div data-audio></div></div>').appendTo('body');
+    var p = new Player('[data-player]');
+
+    expect(function() {
+      p.init();
+    }).to.throw(Error);
+
+    $elem.remove();
   });
 });
