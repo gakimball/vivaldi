@@ -60,6 +60,8 @@ Player.prototype.init = function() {
  * Loads an audio file. The audio can be set to automatically play once enough of it has loaded.
  * @param {String} source - URL to the audio source.
  * @param {Boolean} autoplay [false] - If `true`, the audio will auto-play after being loaded.
+ * @todo Infer MIME type from extension and add that to <source> also
+ * @todo Remove old <source> elements when called again
  */
 Player.prototype.load = function(source, autoplay) {
   // Create a <source> element for the <audio>
@@ -76,7 +78,7 @@ Player.prototype.load = function(source, autoplay) {
 }
 
 Player.prototype.play = function() {
-  
+
 }
 
 $.fn.vivaldi = function() {}
