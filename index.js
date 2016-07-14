@@ -72,13 +72,13 @@ Player.prototype.load = function(source, autoplay) {
   // Auto-play if set to
   if (autoplay) {
     this.ui.audio.on('loadeddata.vivaldi', function() {
-      Player.play();
-    });
+      this.play();
+    }.bind(this));
   }
 }
 
 Player.prototype.play = function() {
-
+  this.ui.audio[0].play();
 }
 
 $.fn.vivaldi = function() {}

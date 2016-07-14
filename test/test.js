@@ -91,4 +91,21 @@ describe('Player.load()', function() {
 
     $elem.remove();
   });
+
+  it('can autoplay the audio source once loaded', function(done) {
+    var TEMPLATE = `
+      <div data-player>
+        <audio data-audio></audio>
+      </div>
+    `;
+    var $elem = $(TEMPLATE).appendTo('body');
+    var p = new Player('[data-player]');
+    p.init();
+    p.load('test.mp3', true);
+
+    p.ui.audio.on('play', function() {
+      $elem.remove();
+      done();
+    });
+  });
 });
