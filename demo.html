@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <title>Vivaldi Demo</title>
+    <link rel="stylesheet" href="vivaldi.css">
+  </head>
+  <body>
+    <div id="player" class="vivaldi">
+      <audio data-audio></audio>
+      <button class="vivaldi-play-pause" data-play-pause>
+        <span class="playing">Pause</span>
+        <span class="paused">Play</span>
+      </button>
+      <div class="vivaldi-time">
+        <span class="vivaldi-time-current" data-time-current></span>
+        <span class="vivaldi-time-total" data-time-total></span>
+      </div>
+      <div class="vivaldi-seeker" data-seeker>
+        <div class="vivaldi-seeker-fill" data-seeker-fill></div>
+      </div>
+    </div>
+
+    <script src="node_modules/jquery/dist/jquery.js"></script>
+    <script src="index.js"></script>
+    <script>
+      var Player = $.fn.vivaldi.Player;
+      var p = new Player('#player');
+      p.init();
+      p.load('test/test.mp3', true);
+    </script>
+  </body>
+</html>

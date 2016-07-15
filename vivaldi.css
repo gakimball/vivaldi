@@ -1,0 +1,45 @@
+.vivaldi {
+  max-width: 600px;
+  margin: 2rem auto;
+}
+
+.vivaldi-play-pause {
+  font-size: 1rem;
+}
+
+  .vivaldi-play-pause .playing {
+    display: none;
+  }
+
+  .vivaldi.is-playing .playing {
+    display: inline-block;
+  }
+
+  .vivaldi.is-playing .paused {
+    display: none;
+  }
+
+.vivaldi-time {
+  clear: both;
+  overflow: hidden;
+}
+
+.vivaldi-time-current {
+  float: left;
+}
+
+.vivaldi-time-total {
+  float: right;
+}
+
+.vivaldi-seeker {
+  height: 10px;
+  background: #ccc;
+}
+
+.vivaldi-seeker-fill {
+  height: 10px;
+  background: #999;
+  transform: scaleX(0);
+  transform-origin: left center;
+}
