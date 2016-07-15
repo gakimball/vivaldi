@@ -62,6 +62,7 @@ Player.prototype.init = function() {
  * @param {Boolean} autoplay [false] - If `true`, the audio will auto-play after being loaded.
  * @todo Infer MIME type from extension and add that to <source> also
  * @todo Remove old <source> elements when called again
+ * @todo In loadeddata handler, only call play() if the media is buffered enough
  */
 Player.prototype.load = function(source, autoplay) {
   // Create a <source> element for the <audio>
@@ -77,8 +78,30 @@ Player.prototype.load = function(source, autoplay) {
   }
 }
 
+/**
+ * Start or resume playback on the player.
+ */
 Player.prototype.play = function() {
   this.ui.audio[0].play();
+}
+
+/**
+ * Pause playback on the player.
+ */
+Player.prototype.pause = function() {
+  this.ui.audio[0].pause();
+}
+
+/**
+ * Start playback if audio is paused, or pause playback if audio is playing.
+ */
+Player.prototype.playToggle = function() {
+  if (this.ui.audio[0].paused) {
+    this.play();
+  }
+  else {
+    this.pause();
+  }
 }
 
 $.fn.vivaldi = function() {}

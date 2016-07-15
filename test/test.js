@@ -109,3 +109,90 @@ describe('Player.load()', function() {
     });
   });
 });
+
+describe('Player.play()', function() {
+  var p, $elem;
+
+  before(function(done) {
+    var TEMPLATE = `
+      <div data-player>
+        <audio data-audio></audio>
+      </div>
+    `;
+    $elem = $(TEMPLATE).appendTo('body');
+    p = new Player('[data-player]');
+    p.init();
+    p.load('test.mp3');
+
+    p.ui.audio.on('loadeddata', function() {
+      done();
+    });
+  });
+
+  it('plays audio', function() {
+    p.play();
+    expect(p.ui.audio[0].paused).to.be.false;
+    $elem.remove();
+  });
+});
+
+describe('Player.pause()', function() {
+  var p, $elem;
+
+  before(function(done) {
+    var TEMPLATE = `
+      <div data-player>
+        <audio data-audio></audio>
+      </div>
+    `;
+    $elem = $(TEMPLATE).appendTo('body');
+    p = new Player('[data-player]');
+    p.init();
+    p.load('test.mp3');
+
+    p.ui.audio.on('loadeddata', function() {
+      p.play();
+      done();
+    });
+  });
+
+  it('pauses audio', function() {
+    p.pause();
+    expect(p.ui.audio[0].paused).to.be.true;
+    $elem.remove();
+  });
+});
+
+describe('Player.playToggle()', function() {
+  var p, $elem;
+
+  before(function(done) {
+    var TEMPLATE = `
+      <div data-player>
+        <audio data-audio></audio>
+      </div>
+    `;
+    $elem = $(TEMPLATE).appendTo('body');
+    p = new Player('[data-player]');
+    p.init();
+    p.load('test.mp3');
+
+    p.ui.audio.on('loadeddata', function() {
+      done();
+    });
+  });
+
+  after(function() {
+    $elem.remove();
+  });
+
+  it('starts playback if audio is paused', function() {
+    p.playToggle();
+    expect(p.ui.audio[0].paused).to.be.false;
+  });
+
+  it('pauses playback if audio is playing', function() {
+    p.playToggle();
+    expect(p.ui.audio[0].paused).to.be.true;
+  });
+});
