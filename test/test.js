@@ -196,3 +196,27 @@ describe('Player.playToggle()', function() {
     expect(p.ui.audio[0].paused).to.be.true;
   });
 });
+
+describe('Player Modules', function() {
+  describe('time-total', function() {
+    it('updates when the total duration of a track changes', function(done) {
+      var TEMPLATE = `
+        <div data-player>
+          <audio data-audio></audio>
+          <span data-time-total></span>
+        </div>
+      `;
+      var $elem = $(TEMPLATE).appendTo('body');
+      var p = new Player('[data-player]');
+      p.init();
+
+      p.ui.audio.on('durationchange', function() {
+        expect(p.ui['time-total']).to.have.text('3:38');
+        $elem.remove();
+        done();
+      });
+
+      p.load('test.mp3');
+    });
+  });
+});

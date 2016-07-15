@@ -41,6 +41,10 @@ Player.prototype.init = function() {
 
     if ($elem.length > 0) {
       this.ui[attr] = $elem;
+
+      if (Player.MODULES[attr]) {
+        Player.MODULES[attr](this, this.ui[attr]);
+      }
     }
   }
 
@@ -101,6 +105,24 @@ Player.prototype.playToggle = function() {
   }
   else {
     this.pause();
+  }
+}
+
+Player.MODULES = {
+  /**
+   * Displays the total time of the current audio track.
+   */
+  'time-total': function(player, ui) {
+    // Set the initial readout
+    ui.text('0:00');
+
+    // When a new audio file is loaded, set the time
+    player.ui.audio.on('durationchange', function() {
+      var time = player.ui.audio[0].duration;
+      var min = parseInt(time / 60);
+      var sec = (time % 60 < 10) ? ('0'+parseInt(time % 60)) : parseInt(time % 60);
+      ui.text(min + ':' + sec);
+    });
   }
 }
 
