@@ -117,7 +117,7 @@ Player.MODULES = {
     ui.text('0:00');
 
     // When a new audio file is loaded, set the time
-    player.ui.audio.on('durationchange', function() {
+    player.ui.audio.on('durationchange.vivaldi', function() {
       var time = Player.util.formatTime(player.ui.audio[0].duration);
       ui.text(time);
     });
@@ -132,7 +132,7 @@ Player.MODULES = {
     ui.text('0:00');
 
     // When the duration changes, change the text
-    player.ui.audio.on('timeupdate', function() {
+    player.ui.audio.on('timeupdate.vivaldi', function() {
       var time = Player.util.formatTime(player.ui.audio[0].currentTime);
       ui.text(time);
     });
