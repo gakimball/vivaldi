@@ -9,7 +9,7 @@ var PLAYER_UI = [
   'audio',
 
   // Play/pause button
-  'play-pause',
+  'play-toggle',
 
   // Time readout
   'time-current',

@@ -23,7 +23,7 @@ describe('Player.init()', function() {
     var TEMPLATE = `
       <div data-player>
         <audio data-audio></audio>
-        <button data-play-pause></button>
+        <button data-play-toggle></button>
         <span data-time-current></span>
         <span data-time-total></span>
         <div data-seeker>
@@ -39,7 +39,7 @@ describe('Player.init()', function() {
 
     expect(p.ui).to.have.all.keys([
       'audio',
-      'play-pause',
+      'play-toggle',
       'time-current',
       'time-total',
       'seeker',
