@@ -1,5 +1,15 @@
 var Player = $.fn.vivaldi.Player;
 
+describe('jQuery.fn.vivaldi', function() {
+  it.only('initializes a player', function() {
+    var $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
+    $elem.vivaldi();
+
+    expect($elem).to.be.an.instanceOf(jQuery);
+    expect($elem.data('vivaldi')).to.be.an.instanceOf(Player);
+  });
+});
+
 describe('Player()', function() {
   it('exists as a property of the Vivaldi jQuery function', function() {
     expect($.fn.vivaldi.Player).to.be.a('function');

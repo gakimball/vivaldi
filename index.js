@@ -164,6 +164,9 @@ Player.MODULES = {
     });
   },
 
+  /**
+   * Visually represents the elapsed time of the playing track.
+   */
   'seeker-fill': function(player, ui) {
     player.ui.audio.on('timeupdate.vivaldi', function() {
       var pct = (player.ui.audio[0].currentTime / player.ui.audio[0].duration).toFixed(3);
@@ -180,7 +183,13 @@ Player.util = {
   }
 }
 
-$.fn.vivaldi = function() {}
+$.fn.vivaldi = function() {
+  return this.each(function() {
+    var p = new Player(this);
+    p.init();
+    $(this).data('vivaldi', p);
+  });
+}
 $.fn.vivaldi.Player = Player;
 
 }(jQuery)
