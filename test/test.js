@@ -274,7 +274,7 @@ describe('Player Modules', function() {
   });
 
   describe('time-current', function() {
-    it.only('updates when the elapsed time of a track changes', function(done) {
+    it('updates when the elapsed time of a track changes', function(done) {
       this.slow(2000);
 
       var TEMPLATE = `
@@ -298,6 +298,29 @@ describe('Player Modules', function() {
       });
 
       p.load('test.mp3', true);
+    });
+  });
+});
+
+describe('Player Utilities', function() {
+  describe('formatTime()', function() {
+    it('converts a number of seconds to a mm:ss timestamp', function() {
+      var fn = Player.util.formatTime;
+      expect(fn(0)).to.equal('0:00');
+      expect(fn(10)).to.equal('0:10');
+      expect(fn(60)).to.equal('1:00');
+      expect(fn(70)).to.equal('1:10');
+    });
+  });
+
+  describe('getOptions()', function() {
+    it('converts a string of plugin options into an object of keys with true/false values', function() {
+      var fn = Player.util.getOptions;
+      var opts = ['one', 'two'];
+
+      expect(fn('', opts)).to.eql({ one: false, two: false });
+      expect(fn('one', opts)).to.eql({ one: true, two: false });
+      expect(fn('one two', opts)).to.eql({ one: true, two: true });
     });
   });
 });

@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="vivaldi.css">
   </head>
   <body>
-    <div id="player" class="vivaldi">
+    <div id="player" data-src="test/test.mp3" data-options="autoplay" class="vivaldi">
       <audio data-audio></audio>
       <button class="vivaldi-play-toggle" data-play-toggle>
         <span class="playing">Pause</span>
@@ -20,7 +20,7 @@
     </div>
 
     <script src="node_modules/jquery/dist/jquery.js"></script>
-    <script src="index.js"></script>
+    <script src="vivaldi.js"></script>
     <script>
       var Player = $.fn.vivaldi.Player;
       var p = new Player('#player');

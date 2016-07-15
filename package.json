@@ -2,7 +2,7 @@
   "name": "vivaldi",
   "version": "0.0.1",
   "description": "jQuery audio player builder.",
-  "main": "index.js",
+  "main": "vivaldi.js",
   "scripts": {
     "test": "mocha"
   },
