@@ -153,6 +153,13 @@ Player.MODULES = {
       var time = Player.util.formatTime(player.ui.audio[0].currentTime);
       ui.text(time);
     });
+  },
+
+  'seeker-fill': function(player, ui) {
+    player.ui.audio.on('timeupdate.vivaldi', function() {
+      var pct = (player.ui.audio[0].currentTime / player.ui.audio[0].duration).toFixed(3);
+      ui.css('transform', 'scaleX(' + pct + ')');
+    });
   }
 }
 
