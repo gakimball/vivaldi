@@ -127,6 +127,15 @@ Player.prototype.playToggle = function() {
 
 Player.MODULES = {
   /**
+   * Toggles play state on click.
+   */
+  'play-toggle': function(player, ui) {
+    ui.on('click', function() {
+      player.playToggle();
+    });
+  },
+
+  /**
    * Displays the total time of the current audio track.
    */
   'time-total': function(player, ui) {
