@@ -175,11 +175,51 @@ Player.MODULES = {
   }
 }
 
+Player.OPTIONS = [
+  /**
+   * A player with data-src will start loading on document ready.
+   */
+  'autoload',
+
+  /**
+   * A player will start playing a track once enough of it has buffered.
+   */
+  'autoplay'
+]
+
 Player.util = {
+  /**
+   * Converts a number of seconds into a timestamp formatted like mm:ss.
+   * @param {Number} time - Number to convert.
+   * @returns {String} A formatted timestamp.
+   */
   formatTime: function(time) {
     var min = parseInt(time / 60);
     var sec = (time % 60 < 10) ? ('0'+parseInt(time % 60)) : parseInt(time % 60);
     return min + ':' + sec;
+  },
+
+  /**
+   * Given a list of input options `input`, and a list of all possible plugin options `options`, creates an object of plugin settings. Each key is a plugin option, and the value of the key is `true` if the option is enabled, or `false` otherwise.
+   * @param {String} input - List of user-defined options as a space-separated list.
+   * @param {String[]} options - Array of all possible plugin options.
+   * @returns {Object} Object of enabled/disabled plugin options.
+   */
+  getOptions: function(input, options) {
+    var obj = {}; // Return value
+    input = input.split(' '); // Input value
+
+    for (var i in options) {
+      var opt = options[i];
+      if (input.indexOf(opt) > -1) {
+        obj[opt] = true;
+      }
+      else {
+        obj[opt] = false;
+      }
+    }
+
+    return obj;
   }
 }
 
