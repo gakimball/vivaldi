@@ -78,6 +78,11 @@ Player.prototype.init = function() {
       this.$player.addClass('is-paused');
     }.bind(this)
   });
+
+  // Auto-load track if data-src is defined on the player container
+  if (this.$player.attr('data-src') && this.options.autoload) {
+    this.load(this.$player.attr('data-src'), this.options.autoplay);
+  }
 }
 
 /**
@@ -94,8 +99,8 @@ Player.prototype.load = function(source, autoplay) {
   sourceElement.setAttribute('src', source);
   this.ui.audio[0].appendChild(sourceElement);
 
-  // Auto-play if set to
-  if (autoplay) {
+  // Auto-play if set to do so
+  if (autoplay || this.options.autoplay) {
     this.ui.audio.on('canplay.vivaldi', function() {
       this.play();
     }.bind(this));

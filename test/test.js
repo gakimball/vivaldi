@@ -348,3 +348,54 @@ describe('Player Utilities', function() {
     });
   });
 });
+
+describe('Player Options', function() {
+  describe('autoload', function() {
+    it('automatically begins loading a track on document ready', function(done) {
+      var $elem = $('<div data-player data-src="test.mp3" data-options="autoload"><audio data-audio></audio></div>').appendTo('body');
+      var p = new Player('[data-player]');
+      p.init();
+
+      p.ui.audio.on('loadstart', function() {
+        $elem.remove();
+        done();
+      });
+    });
+
+    it('will not autoload if no data-src attribute is present', function() {
+      var $elem = $('<div data-player data-options="autoload"><audio data-audio></audio></div>').appendTo('body');
+      var p = new Player('[data-player]');
+
+      expect(function() {
+        p.init()
+      }).to.not.throw(Error);
+
+      $elem.remove();
+    });
+  });
+
+  describe('autoplay', function() {
+    it('will autoplay a track with data-src and the autoload option', function(done) {
+      var $elem = $('<div data-player data-src="test.mp3" data-options="autoload autoplay"><audio data-audio></audio></div>').appendTo('body');
+      var p = new Player('[data-player]');
+      p.init();
+
+      p.ui.audio.on('play', function() {
+        $elem.remove();
+        done();
+      });
+    });
+
+    it('will autoplay a track with data-src and no autoload option', function(done) {
+      var $elem = $('<div data-player data-options="autoplay"><audio data-audio></audio></div>').appendTo('body');
+      var p = new Player('[data-player]');
+      p.init();
+      p.load('test.mp3');
+
+      p.ui.audio.on('play', function() {
+        $elem.remove();
+        done();
+      });
+    });
+  });
+});
