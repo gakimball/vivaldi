@@ -83,6 +83,26 @@ describe('Player.init()', function() {
     $elem.remove();
   });
 
+  it('creates an options object for a player without data-options', function() {
+    var $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
+    var p = new Player('[data-player]');
+    p.init();
+
+    expect(p.options).to.eql({ autoload: false, autoplay: false });
+
+    $elem.remove();
+  });
+
+  it('creates an options object for a player with data-options', function() {
+    var $elem = $('<div data-player data-options="autoload"><audio data-audio></audio></div>').appendTo('body');
+    var p = new Player('[data-player]');
+    p.init();
+
+    expect(p.options).to.eql({ autoload: true, autoplay: false });
+
+    $elem.remove();
+  });
+
   /**
    * @todo Add tests for .is-playing and .is-paused classes
    */
@@ -314,13 +334,17 @@ describe('Player Utilities', function() {
   });
 
   describe('getOptions()', function() {
-    it('converts a string of plugin options into an object of keys with true/false values', function() {
-      var fn = Player.util.getOptions;
-      var opts = ['one', 'two'];
+    var fn = Player.util.getOptions;
+    var opts = ['one', 'two'];
 
+    it('converts a string of plugin options into an object of keys with true/false values', function() {
       expect(fn('', opts)).to.eql({ one: false, two: false });
       expect(fn('one', opts)).to.eql({ one: true, two: false });
       expect(fn('one two', opts)).to.eql({ one: true, two: true });
+    });
+
+    it('can handle an undefined value for input', function() {
+      expect(fn(undefined, opts)).to.eql({ one: false, two: false });
     });
   });
 });

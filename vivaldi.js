@@ -59,6 +59,9 @@ Player.prototype.init = function() {
     throw new Error('Vivaldi Error: player is missing an <audio data-audio> element.');
   }
 
+  // Compile options
+  this.options = Player.util.getOptions(this.$player.attr('data-options'), Player.OPTIONS);
+
   // Set basic events
   this.ui.audio.on({
     loadeddata: function() {
@@ -206,6 +209,10 @@ Player.util = {
    * @returns {Object} Object of enabled/disabled plugin options.
    */
   getOptions: function(input, options) {
+    if (typeof input !== 'string') {
+      input = '';
+    }
+
     var obj = {}; // Return value
     input = input.split(' '); // Input value
 
