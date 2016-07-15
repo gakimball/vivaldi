@@ -43,238 +43,236 @@ describe('Player()', function() {
     expect(p.$player).to.have.length(1);
     expect(p.ui).to.be.an.object;
     expect(p.ui).to.be.empty;
+
+    $elem.remove();
   });
 
-  after(function() {
-    $elem.remove();
-  })
-});
+  describe('Player.init()', function() {
+    var $elem;
 
-describe('Player.init()', function() {
-  var $elem;
-
-  it('finds UI elements and stores them in an object', function() {
-    var TEMPLATE = `
-      <div data-player>
-        <audio data-audio></audio>
-        <button data-play-toggle></button>
-        <span data-time-current></span>
-        <span data-time-total></span>
-        <div data-seeker>
-          <div data-seeker-fill>
+    it('finds UI elements and stores them in an object', function() {
+      var TEMPLATE = `
+        <div data-player>
+          <audio data-audio></audio>
+          <button data-play-toggle></button>
+          <span data-time-current></span>
+          <span data-time-total></span>
+          <div data-seeker>
+            <div data-seeker-fill>
+            </div>
           </div>
         </div>
-      </div>
-    `;
+      `;
 
-    $elem = $(TEMPLATE).appendTo('body');
-    var p = new Player('[data-player]');
-    p.init();
-
-    expect(p.ui).to.have.all.keys([
-      'audio',
-      'play-toggle',
-      'time-current',
-      'time-total',
-      'seeker',
-      'seeker-fill'
-    ]);
-    expect(p.ui.audio).to.be.instanceOf(jQuery);
-  });
-
-  it('throws an error if the data-audio element does not exist', function() {
-    $elem = $('<div data-player></div>').appendTo('body');
-    var p = new Player('[data-player]');
-
-    expect(function() {
+      $elem = $(TEMPLATE).appendTo('body');
+      var p = new Player('[data-player]');
       p.init();
-    }).to.throw(Error);
-  });
 
-  it('throws an error if the data-audio element is not <audio>', function() {
-    $elem = $('<div data-player><div data-audio></div></div>').appendTo('body');
-    var p = new Player('[data-player]');
+      expect(p.ui).to.have.all.keys([
+        'audio',
+        'play-toggle',
+        'time-current',
+        'time-total',
+        'seeker',
+        'seeker-fill'
+      ]);
+      expect(p.ui.audio).to.be.instanceOf(jQuery);
+    });
 
-    expect(function() {
+    it('throws an error if the data-audio element does not exist', function() {
+      $elem = $('<div data-player></div>').appendTo('body');
+      var p = new Player('[data-player]');
+
+      expect(function() {
+        p.init();
+      }).to.throw(Error);
+    });
+
+    it('throws an error if the data-audio element is not <audio>', function() {
+      $elem = $('<div data-player><div data-audio></div></div>').appendTo('body');
+      var p = new Player('[data-player]');
+
+      expect(function() {
+        p.init();
+      }).to.throw(Error);
+    });
+
+    it('creates an options object for a player without data-options', function() {
+      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
+      var p = new Player('[data-player]');
       p.init();
-    }).to.throw(Error);
+
+      expect(p.options).to.eql({ autoload: false, autoplay: false });
+    });
+
+    it('creates an options object for a player with data-options', function() {
+      $elem = $('<div data-player data-options="autoload"><audio data-audio></audio></div>').appendTo('body');
+      var p = new Player('[data-player]');
+      p.init();
+
+      expect(p.options).to.eql({ autoload: true, autoplay: false });
+    });
+
+    /**
+     * @todo Add tests for .is-playing and .is-paused classes
+     */
+    it('sets up event handlers to toggle classes on various state changes', function(done) {
+      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
+      var p = new Player('[data-player]');
+      p.init();
+      p.load('test.mp3');
+
+      p.ui.audio.on('canplay', function() {
+        expect(p.$player).to.have.class('is-active');
+        done();
+      });
+    });
+
+    afterEach(function() {
+      $elem.remove();
+    })
   });
 
-  it('creates an options object for a player without data-options', function() {
-    $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
-    var p = new Player('[data-player]');
-    p.init();
+  describe('Player.load()', function() {
+    var $elem;
 
-    expect(p.options).to.eql({ autoload: false, autoplay: false });
-  });
+    it('appends a <source> element to the <audio> of the player', function() {
+      var TEMPLATE = `
+        <div data-player>
+          <audio data-audio></audio>
+        </div>
+      `;
+      $elem = $(TEMPLATE).appendTo('body');
+      var p = new Player('[data-player]');
+      p.init();
+      p.load('test.mp3');
 
-  it('creates an options object for a player with data-options', function() {
-    $elem = $('<div data-player data-options="autoload"><audio data-audio></audio></div>').appendTo('body');
-    var p = new Player('[data-player]');
-    p.init();
+      var $source = $elem.find('source');
+      expect($source).to.have.length(1);
+      expect($source).to.have.attr('src', 'test.mp3');
+    });
 
-    expect(p.options).to.eql({ autoload: true, autoplay: false });
-  });
+    it('can autoplay the audio source once loaded', function(done) {
+      var TEMPLATE = `
+        <div data-player>
+          <audio data-audio></audio>
+        </div>
+      `;
+      $elem = $(TEMPLATE).appendTo('body');
+      var p = new Player('[data-player]');
+      p.init();
+      p.load('test.mp3', true);
 
-  /**
-   * @todo Add tests for .is-playing and .is-paused classes
-   */
-  it('sets up event handlers to toggle classes on various state changes', function(done) {
-    $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
-    var p = new Player('[data-player]');
-    p.init();
-    p.load('test.mp3');
+      p.ui.audio.on('play', function() {
+        done();
+      });
+    });
 
-    p.ui.audio.on('canplay', function() {
-      expect(p.$player).to.have.class('is-active');
-      done();
+    xit('accepts a data URI instead of a URL as an audio source', function(done) {
+      this.timeout(0);
+
+      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
+      window.p = new Player('[data-player]');
+      p.init();
+      p.load(AUDIO, true);
+    });
+
+    afterEach(function() {
+      $elem.remove();
     });
   });
 
-  afterEach(function() {
-    $elem.remove();
-  })
-});
+  describe('Player.play()', function() {
+    var p, $elem;
 
-describe('Player.load()', function() {
-  var $elem;
+    before(function(done) {
+      var TEMPLATE = `
+        <div data-player>
+          <audio data-audio></audio>
+        </div>
+      `;
+      $elem = $(TEMPLATE).appendTo('body');
+      p = new Player('[data-player]');
+      p.init();
+      p.load('test.mp3');
 
-  it('appends a <source> element to the <audio> of the player', function() {
-    var TEMPLATE = `
-      <div data-player>
-        <audio data-audio></audio>
-      </div>
-    `;
-    $elem = $(TEMPLATE).appendTo('body');
-    var p = new Player('[data-player]');
-    p.init();
-    p.load('test.mp3');
-
-    var $source = $elem.find('source');
-    expect($source).to.have.length(1);
-    expect($source).to.have.attr('src', 'test.mp3');
-  });
-
-  it('can autoplay the audio source once loaded', function(done) {
-    var TEMPLATE = `
-      <div data-player>
-        <audio data-audio></audio>
-      </div>
-    `;
-    $elem = $(TEMPLATE).appendTo('body');
-    var p = new Player('[data-player]');
-    p.init();
-    p.load('test.mp3', true);
-
-    p.ui.audio.on('play', function() {
-      done();
+      p.ui.audio.on('loadeddata', function() {
+        done();
+      });
     });
-  });
 
-  xit('accepts a data URI instead of a URL as an audio source', function(done) {
-    this.timeout(0);
-
-    $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
-    window.p = new Player('[data-player]');
-    p.init();
-    p.load(AUDIO, true);
-  });
-
-  afterEach(function() {
-    $elem.remove();
-  });
-});
-
-describe('Player.play()', function() {
-  var p, $elem;
-
-  before(function(done) {
-    var TEMPLATE = `
-      <div data-player>
-        <audio data-audio></audio>
-      </div>
-    `;
-    $elem = $(TEMPLATE).appendTo('body');
-    p = new Player('[data-player]');
-    p.init();
-    p.load('test.mp3');
-
-    p.ui.audio.on('loadeddata', function() {
-      done();
-    });
-  });
-
-  it('plays audio', function() {
-    p.play();
-    expect(p.ui.audio[0].paused).to.be.false;
-  });
-
-  after(function() {
-    $elem.remove();
-  })
-});
-
-describe('Player.pause()', function() {
-  var p, $elem;
-
-  before(function(done) {
-    var TEMPLATE = `
-      <div data-player>
-        <audio data-audio></audio>
-      </div>
-    `;
-    $elem = $(TEMPLATE).appendTo('body');
-    p = new Player('[data-player]');
-    p.init();
-    p.load('test.mp3');
-
-    p.ui.audio.on('loadeddata', function() {
+    it('plays audio', function() {
       p.play();
-      done();
+      expect(p.ui.audio[0].paused).to.be.false;
     });
+
+    after(function() {
+      $elem.remove();
+    })
   });
 
-  it('pauses audio', function() {
-    p.pause();
-    expect(p.ui.audio[0].paused).to.be.true;
-  });
+  describe('Player.pause()', function() {
+    var p, $elem;
 
-  after(function() {
-    $elem.remove();
-  })
-});
+    before(function(done) {
+      var TEMPLATE = `
+        <div data-player>
+          <audio data-audio></audio>
+        </div>
+      `;
+      $elem = $(TEMPLATE).appendTo('body');
+      p = new Player('[data-player]');
+      p.init();
+      p.load('test.mp3');
 
-describe('Player.playToggle()', function() {
-  var p, $elem;
-
-  before(function(done) {
-    var TEMPLATE = `
-      <div data-player>
-        <audio data-audio></audio>
-      </div>
-    `;
-    $elem = $(TEMPLATE).appendTo('body');
-    p = new Player('[data-player]');
-    p.init();
-    p.load('test.mp3');
-
-    p.ui.audio.on('loadeddata', function() {
-      done();
+      p.ui.audio.on('loadeddata', function() {
+        p.play();
+        done();
+      });
     });
+
+    it('pauses audio', function() {
+      p.pause();
+      expect(p.ui.audio[0].paused).to.be.true;
+    });
+
+    after(function() {
+      $elem.remove();
+    })
   });
 
-  it('starts playback if audio is paused', function() {
-    p.playToggle();
-    expect(p.ui.audio[0].paused).to.be.false;
-  });
+  describe('Player.playToggle()', function() {
+    var p, $elem;
 
-  it('pauses playback if audio is playing', function() {
-    p.playToggle();
-    expect(p.ui.audio[0].paused).to.be.true;
-  });
+    before(function(done) {
+      var TEMPLATE = `
+        <div data-player>
+          <audio data-audio></audio>
+        </div>
+      `;
+      $elem = $(TEMPLATE).appendTo('body');
+      p = new Player('[data-player]');
+      p.init();
+      p.load('test.mp3');
 
-  after(function() {
-    $elem.remove();
+      p.ui.audio.on('loadeddata', function() {
+        done();
+      });
+    });
+
+    it('starts playback if audio is paused', function() {
+      p.playToggle();
+      expect(p.ui.audio[0].paused).to.be.false;
+    });
+
+    it('pauses playback if audio is playing', function() {
+      p.playToggle();
+      expect(p.ui.audio[0].paused).to.be.true;
+    });
+
+    after(function() {
+      $elem.remove();
+    });
   });
 });
 
