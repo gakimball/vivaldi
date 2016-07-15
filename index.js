@@ -58,6 +58,23 @@ Player.prototype.init = function() {
   else {
     throw new Error('Vivaldi Error: player is missing an <audio data-audio> element.');
   }
+
+  // Set basic events
+  this.ui.audio.on({
+    loadeddata: function() {
+      this.$player.addClass('is-active');
+    }.bind(this),
+
+    play: function() {
+      this.$player.removeClass('is-paused');
+      this.$player.addClass('is-playing');
+    }.bind(this),
+
+    pause: function() {
+      this.$player.removeClass('is-playing');
+      this.$player.addClass('is-paused');
+    }.bind(this)
+  });
 }
 
 /**

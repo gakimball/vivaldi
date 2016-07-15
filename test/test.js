@@ -71,6 +71,22 @@ describe('Player.init()', function() {
 
     $elem.remove();
   });
+
+  /**
+   * @todo Add tests for .is-playing and .is-paused classes
+   */
+  it('sets up event handlers to toggle classes on various state changes', function(done) {
+    var $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
+    var p = new Player('[data-player]');
+    p.init();
+    p.load('test.mp3');
+
+    p.ui.audio.on('canplay', function() {
+      expect(p.$player).to.have.class('is-active');
+      $elem.remove();
+      done();
+    });
+  });
 });
 
 describe('Player.load()', function() {
