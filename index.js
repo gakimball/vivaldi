@@ -2,7 +2,7 @@
 
 /**
  * Names of possible player UI elements.
- * These strings are used as keys on the player.ui object, and as CSS selectors to locate the matching DOM elements, i.e. data-time-elapsed.
+ * These strings are used as keys on the player.ui object, and as CSS selectors to locate the matching DOM elements, i.e. data-time-current.
  */
 var PLAYER_UI = [
   // <audio> source
@@ -12,7 +12,7 @@ var PLAYER_UI = [
   'play-pause',
 
   // Time readout
-  'time-elapsed',
+  'time-current',
   'time-total',
 
   // Seeker bar
@@ -76,7 +76,7 @@ Player.prototype.load = function(source, autoplay) {
 
   // Auto-play if set to
   if (autoplay) {
-    this.ui.audio.on('loadeddata.vivaldi', function() {
+    this.ui.audio.on('canplay.vivaldi', function() {
       this.play();
     }.bind(this));
   }
@@ -118,11 +118,32 @@ Player.MODULES = {
 
     // When a new audio file is loaded, set the time
     player.ui.audio.on('durationchange', function() {
-      var time = player.ui.audio[0].duration;
-      var min = parseInt(time / 60);
-      var sec = (time % 60 < 10) ? ('0'+parseInt(time % 60)) : parseInt(time % 60);
-      ui.text(min + ':' + sec);
+      var time = Player.util.formatTime(player.ui.audio[0].duration);
+      ui.text(time);
     });
+  },
+
+  /**
+   * Displays the current time of the audio track playing.
+   * @todo Throttle update function
+   */
+  'time-current': function(player, ui) {
+    // Set the initial readout
+    ui.text('0:00');
+
+    // When the duration changes, change the text
+    player.ui.audio.on('timeupdate', function() {
+      var time = Player.util.formatTime(player.ui.audio[0].currentTime);
+      ui.text(time);
+    });
+  }
+}
+
+Player.util = {
+  formatTime: function(time) {
+    var min = parseInt(time / 60);
+    var sec = (time % 60 < 10) ? ('0'+parseInt(time % 60)) : parseInt(time % 60);
+    return min + ':' + sec;
   }
 }
 

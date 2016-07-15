@@ -24,7 +24,7 @@ describe('Player.init()', function() {
       <div data-player>
         <audio data-audio></audio>
         <button data-play-pause></button>
-        <span data-time-elapsed></span>
+        <span data-time-current></span>
         <span data-time-total></span>
         <div data-seeker>
           <div data-seeker-fill>
@@ -40,7 +40,7 @@ describe('Player.init()', function() {
     expect(p.ui).to.have.all.keys([
       'audio',
       'play-pause',
-      'time-elapsed',
+      'time-current',
       'time-total',
       'seeker',
       'seeker-fill'
@@ -217,6 +217,33 @@ describe('Player Modules', function() {
       });
 
       p.load('test.mp3');
+    });
+  });
+
+  describe('time-current', function() {
+    it('updates when the elapsed time of a track changes', function(done) {
+      this.timeout(0);
+
+      var TEMPLATE = `
+        <div data-player>
+          <audio data-audio></audio>
+          <span data-time-current></span> /
+          <span data-time-total></span>
+        </div>
+      `;
+      var $elem = $(TEMPLATE).appendTo('body');
+      var p = new Player('[data-player]');
+      p.init();
+
+      p.ui.audio.on('play', function() {
+        setTimeout(function() {
+          expect(p.ui['time-current']).to.not.have.text('0:00');
+          $elem.remove();
+          done();
+        }, 1500);
+      });
+
+      p.load('test.mp3', true);
     });
   });
 });
