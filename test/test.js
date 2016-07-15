@@ -1,12 +1,13 @@
 var Player = $.fn.vivaldi.Player;
 
 describe('jQuery.fn.vivaldi', function() {
-  it.only('initializes a player', function() {
+  it('initializes a player', function() {
     var $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
     $elem.vivaldi();
 
     expect($elem).to.be.an.instanceOf(jQuery);
     expect($elem.data('vivaldi')).to.be.an.instanceOf(Player);
+    $elem.remove();
   });
 });
 
@@ -224,6 +225,32 @@ describe('Player.playToggle()', function() {
 });
 
 describe('Player Modules', function() {
+  describe('play-toggle', function() {
+    it('toggles play state on click', function(done) {
+      var TEMPLATE = `
+        <div data-player>
+          <button data-play-toggle>Play/Pause</button>
+          <audio data-audio></audio>
+        </div>
+      `;
+      var $elem = $(TEMPLATE).appendTo('body');
+      var $button = $elem.find('button');
+      var p = new Player('[data-player]');
+      p.init();
+      p.load('test.mp3', true);
+
+      p.ui.audio.one('play', function() {
+        $button.click();
+        expect(p.ui.audio[0].paused).to.be.true;
+        $button.click();
+        expect(p.ui.audio[0].paused).to.be.false;
+
+        $elem.remove();
+        done();
+      });
+    });
+  });
+
   describe('time-total', function() {
     it('updates when the total duration of a track changes', function(done) {
       var TEMPLATE = `
@@ -247,8 +274,8 @@ describe('Player Modules', function() {
   });
 
   describe('time-current', function() {
-    it('updates when the elapsed time of a track changes', function(done) {
-      this.timeout(0);
+    it.only('updates when the elapsed time of a track changes', function(done) {
+      this.slow(2000);
 
       var TEMPLATE = `
         <div data-player>
@@ -261,12 +288,13 @@ describe('Player Modules', function() {
       var p = new Player('[data-player]');
       p.init();
 
-      p.ui.audio.on('play', function() {
-        setTimeout(function() {
-          expect(p.ui['time-current']).to.not.have.text('0:00');
+      p.ui.audio.on('timeupdate.test', function() {
+        if (p.ui.audio[0].currentTime >= 1) {
+          expect(p.ui['time-current']).to.have.text('0:01');
+          p.ui.audio.off('timeupdate.test');
           $elem.remove();
           done();
-        }, 1500);
+        }
       });
 
       p.load('test.mp3', true);
