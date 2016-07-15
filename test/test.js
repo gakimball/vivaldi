@@ -1,5 +1,17 @@
 var Player = $.fn.vivaldi.Player;
 
+// var AUDIO;
+//
+// before(function(done) {
+//   this.timeout(0);
+//
+//   $.get('test.mp3')
+//     .done(function(data) {
+//       AUDIO = 'data:audio/mp3;base64,' + btoa(unescape(encodeURIComponent(data)));
+//       done();
+//     });
+// });
+
 describe('jQuery.fn.vivaldi', function() {
   var $elem;
 
@@ -157,6 +169,15 @@ describe('Player.load()', function() {
     p.ui.audio.on('play', function() {
       done();
     });
+  });
+
+  xit('accepts a data URI instead of a URL as an audio source', function(done) {
+    this.timeout(0);
+
+    $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
+    window.p = new Player('[data-player]');
+    p.init();
+    p.load(AUDIO, true);
   });
 
   afterEach(function() {
