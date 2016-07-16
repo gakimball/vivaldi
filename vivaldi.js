@@ -28,6 +28,9 @@ var PLAYER_UI = [
 function Player(selector) {
   this.$player = $(selector);
   this.ui = {};
+  this.state = {
+    seeking: false
+  };
 }
 
 /**
@@ -133,6 +136,22 @@ Player.prototype.playToggle = function() {
   }
 }
 
+/**
+ * Seek to the given time in the track. The time can be given as an integer, which is a number of seconds, or a decimal, which is a percentage of the track's total length.
+ */
+Player.prototype.seek = function(time) {
+  var audio = this.ui.audio[0];
+
+  // Decimal values
+  if (time % 1 != 0) {
+    audio.currentTime = (audio.duration * time).toFixed();
+  }
+  // Integer values
+  else {
+    audio.currentTime = time;
+  }
+}
+
 Player.MODULES = {
   /**
    * Toggles play state on click.
@@ -167,8 +186,45 @@ Player.MODULES = {
 
     // When the duration changes, change the text
     player.ui.audio.on('timeupdate.vivaldi', function() {
-      var time = Player.util.formatTime(player.ui.audio[0].currentTime);
+      if (!player.state.seeking) {
+        var time = Player.util.formatTime(player.ui.audio[0].currentTime);
+        ui.text(time);
+      }
+    });
+
+    // While the user is seeking, change the text
+    player.$player.on('seekerupdate.vivaldi', function(event, pct) {
+      var time = (pct * player.ui.audio[0].duration).toFixed();
+      time = Player.util.formatTime(time);
       ui.text(time);
+    });
+  },
+
+  /**
+   * Seeker bar which can be clicked on to move the playhead.
+   * @todo Prevent autoplay after seeking if audio was already paused
+   */
+  'seeker': function(player, ui) {
+    var audio = player.ui.audio[0];
+
+    // On mousedown, the player enters a seeking state.
+    ui.on('mousedown.vivaldi', function(event) {
+      player.state.seeking = true;
+    });
+
+    // Releasing the mouse button moves the track to the given time.
+    ui.on('mouseup.vivaldi', function(event) {
+      var pct = Player.util.getClickPosition(this, event);
+      player.seek(pct);
+      player.state.seeking = false;
+    });
+
+    // If the mouse button is already held down, dragging the mouse inside the seeker will move the playhead.
+    ui.on('mousemove.vivaldi', function(event) {
+      if (player.state.seeking) {
+        var pct = Player.util.getClickPosition(this, event);
+        player.$player.trigger('seekerupdate.vivaldi', [pct]);
+      }
     });
   },
 
@@ -176,8 +232,16 @@ Player.MODULES = {
    * Visually represents the elapsed time of the playing track.
    */
   'seeker-fill': function(player, ui) {
+    // Update the fill as the track's elapsed time changes
     player.ui.audio.on('timeupdate.vivaldi', function() {
-      var pct = (player.ui.audio[0].currentTime / player.ui.audio[0].duration).toFixed(3);
+      if (!player.state.seeking) {
+        var pct = (player.ui.audio[0].currentTime / player.ui.audio[0].duration).toFixed(3);
+        ui.css('transform', 'scaleX(' + pct + ')');
+      }
+    });
+
+    // Update the fill as the user is seeking
+    player.$player.on('seekerupdate.vivaldi', function(event, pct) {
       ui.css('transform', 'scaleX(' + pct + ')');
     });
   }
@@ -232,6 +296,18 @@ Player.util = {
     }
 
     return obj;
+  },
+
+  /**
+   * Calculates the horizontal position of a click on an element, returning a decimal value representing the offset. 0 is left, and 1 is right.
+   * @param {Element} elem - HTML element clicked on.
+   * @param {jQuery.Event} event - Click event.
+   * @returns {Float} Decimal value of offset.
+   */
+  getClickPosition: function(elem, event) {
+    var rect = elem.getBoundingClientRect();
+    var x = event.clientX - rect.left;
+    return (x / rect.width).toFixed(2);
   }
 }
 

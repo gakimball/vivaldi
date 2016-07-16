@@ -1,6 +1,7 @@
 .vivaldi {
   max-width: 600px;
   margin: 2rem auto;
+  user-select: none;
 }
 
 .vivaldi-play-toggle {
@@ -35,6 +36,7 @@
 .vivaldi-seeker {
   height: 10px;
   background: #ccc;
+  cursor: pointer;
 }
 
 .vivaldi-seeker-fill {
