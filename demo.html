@@ -19,13 +19,33 @@
       </div>
     </div>
 
+    <div id="player2" data-src="test/test.mp3" class="vivaldi">
+      <audio data-audio></audio>
+      <button class="vivaldi-play-toggle" data-play-toggle>
+        <span class="playing">Pause</span>
+        <span class="paused">Play</span>
+      </button>
+      <div class="vivaldi-time">
+        <span class="vivaldi-time-current" data-time-current></span>
+        <span class="vivaldi-time-total" data-time-total></span>
+      </div>
+      <div class="vivaldi-seeker" data-seeker>
+        <div class="vivaldi-seeker-fill" data-seeker-fill></div>
+      </div>
+    </div>
+
     <script src="node_modules/jquery/dist/jquery.js"></script>
     <script src="vivaldi.js"></script>
     <script>
+      Vivaldi.exclusive();
       var Player = Vivaldi.Player;
       var p = new Player('#player');
       p.init();
       p.load('test/test.mp3', true);
+
+      var p2 = new Player('#player2');
+      p2.init();
+      p2.load('test/test.mp3', true);
     </script>
   </body>
 </html>

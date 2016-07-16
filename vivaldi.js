@@ -1,7 +1,16 @@
 /**
  * @todo Consider moving player.ui.audio to player.audio as a plain DOM reference
+ * @todo Prevent duplicate instances of Player from being attached to an element
  */
 !function($) {
+
+/**
+ * Global settings for all plugin elements.
+ */
+var ENV_OPTIONS = {
+  // If true, only one player on a page can play audio at a time.
+  exclusive: false
+}
 
 /**
  * Names of possible player UI elements.
@@ -85,6 +94,14 @@ Player.prototype.init = function() {
     }.bind(this)
   });
 
+  if (ENV_OPTIONS.exclusive) {
+    $(window).on('playing.vivaldi', function(event) {
+      if (!this.$player.is(event.target)) {
+        this.pause();
+      }
+    }.bind(this));
+  }
+
   // Auto-load track if data-src is defined on the player container
   if (this.$player.attr('data-src') && this.options.autoload) {
     this.load(this.$player.attr('data-src'), this.options.autoplay);
@@ -117,6 +134,10 @@ Player.prototype.load = function(source, autoplay) {
  */
 Player.prototype.play = function() {
   this.ui.audio[0].play();
+
+  if (ENV_OPTIONS.exclusive) {
+    this.$player.trigger('playing.vivaldi');
+  }
 }
 
 /**
@@ -322,6 +343,9 @@ $.fn.vivaldi = function() {
 }
 
 Vivaldi = {
+  exclusive: function() {
+    ENV_OPTIONS.exclusive = true;
+  },
   Player: Player
 };
 
