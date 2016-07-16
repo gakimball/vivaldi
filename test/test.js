@@ -1,4 +1,4 @@
-var Player = $.fn.vivaldi.Player;
+var Player = Vivaldi.Player;
 
 // var AUDIO;
 //
@@ -31,8 +31,8 @@ describe('jQuery.fn.vivaldi', function() {
 describe('Player()', function() {
   var $elem;
 
-  it('exists as a property of the Vivaldi jQuery function', function() {
-    expect($.fn.vivaldi.Player).to.be.a('function');
+  it('exists on window.Vivaldi', function() {
+    expect(window.Vivaldi.Player).to.be.a('function');
   });
 
   it('creates a new instance of a Player', function() {

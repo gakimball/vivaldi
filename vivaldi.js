@@ -1,3 +1,6 @@
+/**
+ * @todo Consider moving player.ui.audio to player.audio as a plain DOM reference
+ */
 !function($) {
 
 /**
@@ -94,7 +97,6 @@ Player.prototype.init = function() {
  * @param {Boolean} autoplay [false] - If `true`, the audio will auto-play after being loaded.
  * @todo Infer MIME type from extension and add that to <source> also
  * @todo Remove old <source> elements when called again
- * @todo In loadeddata handler, only call play() if the media is buffered enough
  */
 Player.prototype.load = function(source, autoplay) {
   // Create a <source> element for the <audio>
@@ -214,7 +216,7 @@ Player.MODULES = {
 
     // Releasing the mouse button moves the track to the given time.
     ui.on('mouseup.vivaldi', function(event) {
-      var pct = Player.util.getClickPosition(this, event);
+      var pct = Player.util.getMousePosition(this, event);
       player.seek(pct);
       player.state.seeking = false;
     });
@@ -222,7 +224,7 @@ Player.MODULES = {
     // If the mouse button is already held down, dragging the mouse inside the seeker will move the playhead.
     ui.on('mousemove.vivaldi', function(event) {
       if (player.state.seeking) {
-        var pct = Player.util.getClickPosition(this, event);
+        var pct = Player.util.getMousePosition(this, event);
         player.$player.trigger('seekerupdate.vivaldi', [pct]);
       }
     });
@@ -304,7 +306,7 @@ Player.util = {
    * @param {jQuery.Event} event - Click event.
    * @returns {Float} Decimal value of offset.
    */
-  getClickPosition: function(elem, event) {
+  getMousePosition: function(elem, event) {
     var rect = elem.getBoundingClientRect();
     var x = event.clientX - rect.left;
     return (x / rect.width).toFixed(2);
@@ -318,6 +320,9 @@ $.fn.vivaldi = function() {
     $(this).data('vivaldi', p);
   });
 }
-$.fn.vivaldi.Player = Player;
+
+Vivaldi = {
+  Player: Player
+};
 
 }(jQuery)
