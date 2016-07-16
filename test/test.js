@@ -20,7 +20,6 @@ describe('jQuery.fn.vivaldi', function() {
     $elem.vivaldi();
 
     expect($elem).to.be.an.instanceOf(jQuery);
-    expect($elem.data('vivaldi')).to.be.an.instanceOf(Player);
   });
 
   after(function() {
@@ -43,6 +42,7 @@ describe('Player()', function() {
     expect(p.$player).to.have.length(1);
     expect(p.ui).to.be.an.object;
     expect(p.ui).to.be.empty;
+    expect(p.$player.data('vivaldi')).to.be.an.instanceOf(Player);
 
     $elem.remove();
   });

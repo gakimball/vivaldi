@@ -1,6 +1,6 @@
 /**
  * @todo Consider moving player.ui.audio to player.audio as a plain DOM reference
- * @todo Prevent duplicate instances of Player from being attached to an element
+ * @todo Consider calling Player.init in the constructor
  */
 !function($) {
 
@@ -35,14 +35,19 @@ var PLAYER_UI = [
 /**
  * Creates a new instance of an audio player.
  * @class
- * @param {String} selector - CSS selector of the player container.
+ * @param {String|HTMLElement|jQuery} element - CSS selector, DOM element, or jQuery element of the player container.
  */
-function Player(selector) {
-  this.$player = $(selector);
+function Player(element) {
+  if ($(element).data('vivaldi') instanceof Player) {
+    console.warn('Vivaldi: tried to initialize a player twice on element ' + element);
+  }
+
+  this.$player = $(element);
   this.ui = {};
   this.state = {
     seeking: false
   };
+  this.$player.data('vivaldi', this);
 }
 
 /**
@@ -338,7 +343,6 @@ $.fn.vivaldi = function() {
   return this.each(function() {
     var p = new Player(this);
     p.init();
-    $(this).data('vivaldi', p);
   });
 }
 
