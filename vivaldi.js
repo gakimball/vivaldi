@@ -44,6 +44,7 @@ function Player(element) {
 
   this.$player = $(element);
   this.ui = {};
+  this.song = null;
   this.state = {
     seeking: false
   };
@@ -131,6 +132,21 @@ Player.prototype.load = function(source, autoplay) {
     this.ui.audio.on('canplay.vivaldi', function() {
       this.play();
     }.bind(this));
+  }
+}
+
+/**
+ * Sets the song to be used by the player. A song is a plain object of any format, with a `url` parameter pointing to the URL of the track.
+ * @param {Object} song - Song to load.
+ */
+Player.prototype.setSong = function(song) {
+  if ($.isPlainObject(song)) {
+    if (!song.url) {
+      throw new Error('Vivaldi: when loading a song into a player, there must be a "url" property.');
+    }
+    else {
+      this.song = song;
+    }
   }
 }
 

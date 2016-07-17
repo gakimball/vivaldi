@@ -182,6 +182,51 @@ describe('Player()', function() {
     });
   });
 
+  describe('Player.setSong()', function() {
+    var $elem;
+
+    it('sets the input song to the Player.song property', function() {
+      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
+      var p = new Player('[data-player]');
+      var song = {
+        url: 'test.mp3'
+      };
+
+      p.init();
+      p.setSong(song);
+      expect(p.song).to.eql(song);
+    });
+
+    it('ignores non-object input', function() {
+      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
+      var p = new Player('[data-player]');
+      p.init();
+
+      p.setSong(0);
+      expect(p.song).to.be.null;
+
+      p.setSong('string');
+      expect(p.song).to.be.null;
+
+      p.setSong(null);
+      expect(p.song).to.be.null;
+    });
+
+    it('throws an error if the song has no URL parameter', function() {
+      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
+      var p = new Player('[data-player]');
+      p.init();
+
+      expect(function() {
+        p.setSong({ foo: 'bar' });
+      }).to.throw(Error);
+    });
+
+    afterEach(function() {
+      $elem.remove();
+    })
+  });
+
   describe('Player.play()', function() {
     var p, $elem;
 
