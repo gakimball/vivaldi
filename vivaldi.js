@@ -165,6 +165,24 @@ Player.prototype.setSong = function(song) {
 }
 
 /**
+ * Get song metadata from an external source, using a user-defined loading function set by Vivaldi.loader().
+ */
+Player.prototype.getSong = function() {
+  if (!ENV_OPTIONS.loader) {
+    throw new Error('Vivaldi: must define a loading function with Vivaldi.loader() before calling Player.getSong()');
+  }
+
+  // Add a callback to the arguments sent to the loader function
+  var args = Array.prototype.slice.call(arguments);
+  args.push(function(song) {
+    this.setSong(song);
+  }.bind(this));
+
+  // Then run the loader function with user arguments + the callback
+  ENV_OPTIONS.loader.apply(this, args);
+}
+
+/**
  * Start or resume playback on the player.
  */
 Player.prototype.play = function() {
@@ -387,6 +405,13 @@ $.fn.vivaldi = function() {
 Vivaldi = {
   exclusive: function() {
     ENV_OPTIONS.exclusive = true;
+  },
+  loader: function(fn) {
+    if (typeof fn !== 'function') {
+      throw new Error('Vivaldi: must supply a function to loader().');
+    }
+
+    ENV_OPTIONS.loader = fn;
   },
   Player: Player
 };

@@ -273,6 +273,44 @@ describe('Player()', function() {
     });
   });
 
+  describe('Player.getSong()', function() {
+    var $elem;
+
+    it('calls the global loader function to fetch song metadata', function() {
+      $elem = $('<div data-player><audio data-audio></div></div>').appendTo('body');
+      var p = new Player('[data-player]');
+      var song = {
+        url: 'test.mp3'
+      };
+
+      Vivaldi.loader(function(track, cb) {
+        cb(song);
+      });
+
+      p.$player.on('trackchange.vivaldi', function() {
+        expect(p.song).to.eql(song);
+        done();
+      });
+
+      p.init();
+      p.getSong(null);
+    });
+
+    it('fails if a loader function has not been set', function() {
+      $elem = $('<div data-player><audio data-audio></div></div>').appendTo('body');
+      var p = new Player('[data-player]');
+      p.init();
+
+      expect(function() {
+        p.getSong();
+      }).to.throw(Error);
+    });
+
+    afterEach(function() {
+      $elem.remove();
+    });
+  });
+
   describe('Player.play()', function() {
     var p, $elem;
 
@@ -539,4 +577,14 @@ describe('Player Options', function() {
   afterEach(function() {
     $elem.remove();
   })
+});
+
+describe('Vivaldi', function() {
+  describe('Vivaldi.loader()', function() {
+    it('only allows functions to be passed as parameters', function() {
+      expect(function() {
+        Vivaldi.loader(null);
+      }).to.throw(Error);
+    });
+  });
 });
