@@ -330,11 +330,11 @@ Player.MODULES = {
     var audio = player.ui.audio[0];
 
     ui.on('click.vivaldi', function() {
+      // "n" is a jump forward, "-n" is a jump backward
       var offset = parseInt(this.getAttribute('data-seeker-jump'));
       var seekLocation = audio.currentTime + offset;
 
-      console.log(offset, seekLocation);
-
+      // The seek location must be >= 0 and <= the total track length
       if (seekLocation < 0) seekLocation = 0;
       if (seekLocation > audio.duration) seekLocation = audio.duration;
 
