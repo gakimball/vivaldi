@@ -403,9 +403,17 @@ $.fn.vivaldi = function() {
 }
 
 Vivaldi = {
+  /**
+   * Set all players to "exclusive" mode, which means only one can be playing audio at a time on the page.
+   */
   exclusive: function() {
     ENV_OPTIONS.exclusive = true;
   },
+
+  /**
+   * Define a loading function to be used when an audio player calls `getSong()`. The last parameter of the function must be a callback which is called with a song metadata object as its parameter.
+   * @param {Function} fn - Loading function.
+   */
   loader: function(fn) {
     if (typeof fn !== 'function') {
       throw new Error('Vivaldi: must supply a function to loader().');
@@ -413,6 +421,21 @@ Vivaldi = {
 
     ENV_OPTIONS.loader = fn;
   },
+
+  /**
+   * Define elements on the page that can load tracks on an audio player when clicked on. `selector` must be an HTML attribute; this is what will be used to look for click targets. On click, the value of the `selector` attribute is passed to `Player.getSong()` as an argument.
+   * @param {String} attr - Attribute of click targets.
+   * @param {Vivaldi.Player} player - Audio player instance to send the track requests to.
+   */
+  inlineTracks(attr, player) {
+    $('[' + attr + ']').on('click.vivaldi', function() {
+      player.getSong(this.getAttribute(attr));
+    });
+  },
+
+  /**
+   * Audio player class.
+   */
   Player: Player
 };
 

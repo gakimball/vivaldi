@@ -587,4 +587,34 @@ describe('Vivaldi', function() {
       }).to.throw(Error);
     });
   });
+
+  describe('Vivaldi.inlineTracks()', function() {
+    var $elem, $clicker;
+
+    it('creates click targets to load song metadata', function() {
+      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
+      $clicker = $('<button data-track="test">Button!</button>').appendTo('body');
+      var p = new Player('[data-player]');
+      p.init();
+
+      Vivaldi.loader(function(text, cb) {
+        cb({
+          url: 'test.mp3',
+          text: text
+        });
+      });
+      Vivaldi.inlineTracks('data-track', p);
+
+      $clicker.click();
+      expect(p.song).to.eql({
+        url: 'test.mp3',
+        text: 'test'
+      });
+    });
+
+    afterEach(function() {
+      $elem.remove();
+      $clicker.remove();
+    })
+  });
 });
