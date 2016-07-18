@@ -6,21 +6,7 @@
   <body>
     <div id="player" data-src="test/test.mp3" data-options="autoplay" class="vivaldi">
       <audio data-audio></audio>
-      <button class="vivaldi-play-toggle" data-play-toggle>
-        <span class="playing">Pause</span>
-        <span class="paused">Play</span>
-      </button>
-      <div class="vivaldi-time">
-        <span class="vivaldi-time-current" data-time-current></span>
-        <span class="vivaldi-time-total" data-time-total></span>
-      </div>
-      <div class="vivaldi-seeker" data-seeker>
-        <div class="vivaldi-seeker-fill" data-seeker-fill></div>
-      </div>
-    </div>
-
-    <div id="player2" data-src="test/test.mp3" class="vivaldi">
-      <audio data-audio></audio>
+      <div data-meta="title"></div>
       <button class="vivaldi-play-toggle" data-play-toggle>
         <span class="playing">Pause</span>
         <span class="paused">Play</span>
@@ -41,11 +27,11 @@
       var Player = Vivaldi.Player;
       var p = new Player('#player');
       p.init();
-      p.load('test/test.mp3', true);
-
-      var p2 = new Player('#player2');
-      p2.init();
-      p2.load('test/test.mp3', true);
+      p.setSong({
+        url: 'test/test.mp3',
+        title: 'Song Title'
+      });
+      p.load();
     </script>
   </body>
 </html>

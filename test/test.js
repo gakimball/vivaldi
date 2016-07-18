@@ -177,6 +177,52 @@ describe('Player()', function() {
       p.load(AUDIO, true);
     });
 
+    it('can be called with no parameters if the player has a data-src attribute', function(done) {
+      $elem = $('<div data-player data-src="test.mp3"><audio data-audio></audio></div>').appendTo('body');
+      var p = new Player('[data-player]');
+      p.init();
+      p.load();
+
+      p.ui.audio.on('loadedmetadata', function() {
+        done();
+      });
+    });
+
+    it('can be called with a null parameter if the player has a data-src attribute', function(done) {
+      $elem = $('<div data-player data-src="test.mp3"><audio data-audio></audio></div>').appendTo('body');
+      var p = new Player('[data-player]');
+      p.init();
+      p.load(null, true);
+
+      p.ui.audio.on('play', function() {
+        done();
+      });
+    });
+
+    it('can be called with no parameters if the player has song metadata', function(done) {
+      $elem = $('<div data-player data-src="test.mp3"><audio data-audio></audio></div>').appendTo('body');
+      var p = new Player('[data-player]');
+      p.init();
+      p.setSong({ url: 'test.mp3' });
+      p.load();
+
+      p.ui.audio.on('loadedmetadata', function() {
+        done();
+      });
+    });
+
+    it('can be called with a null parameter if the player has song metadata', function(done) {
+      $elem = $('<div data-player data-src="test.mp3"><audio data-audio></audio></div>').appendTo('body');
+      var p = new Player('[data-player]');
+      p.init();
+      p.setSong({ url: 'test.mp3' });
+      p.load(null, true);
+
+      p.ui.audio.on('play', function() {
+        done();
+      });
+    });
+
     afterEach(function() {
       $elem.remove();
     });
@@ -224,7 +270,7 @@ describe('Player()', function() {
 
     afterEach(function() {
       $elem.remove();
-    })
+    });
   });
 
   describe('Player.play()', function() {
@@ -394,6 +440,20 @@ describe('Player Modules', function() {
       });
 
       p.load('test.mp3', true);
+    });
+  });
+
+  describe('meta', function() {
+    it('displays the contents of properties on player.song', function() {
+      $elem = $('<div data-player><div data-meta="title"></div><audio data-audio></audio></div>').appendTo('body');
+      var p = new Player('[data-player]');
+      p.init();
+      p.setSong({
+        url: 'test.mp3',
+        title: 'Title'
+      });
+
+      expect($('[data-meta]')).to.have.text('Title');
     });
   });
 

@@ -29,7 +29,10 @@ var PLAYER_UI = [
 
   // Seeker bar
   'seeker',
-  'seeker-fill'
+  'seeker-fill',
+
+  // Track metadata
+  'meta'
 ];
 
 /**
@@ -122,6 +125,16 @@ Player.prototype.init = function() {
  * @todo Remove old <source> elements when called again
  */
 Player.prototype.load = function(source, autoplay) {
+  // If no source is given, try to load first from data-src, then from player.song.url
+  if (source === null || source === undefined) {
+    if (typeof this.$player.attr('data-src') !== 'undefined') {
+      source = this.$player.attr('data-src');
+    }
+    else if (this.song && this.song.url) {
+      source = this.song.url;
+    }
+  }
+
   // Create a <source> element for the <audio>
   var sourceElement = document.createElement('source');
   sourceElement.setAttribute('src', source);
@@ -146,6 +159,7 @@ Player.prototype.setSong = function(song) {
     }
     else {
       this.song = song;
+      this.$player.trigger('trackchange.vivaldi');
     }
   }
 }
@@ -288,6 +302,14 @@ Player.MODULES = {
     player.$player.on('seekerupdate.vivaldi', function(event, pct) {
       ui.css('transform', 'scaleX(' + pct + ')');
     });
+  },
+
+  'meta': function(player, ui) {
+    player.$player.on('trackchange.vivaldi', function(event) {
+      for (var key in this.song) {
+        ui.filter('[data-meta="' + key + '"]').text(this.song[key]);
+      }
+    }.bind(player));
   }
 }
 
