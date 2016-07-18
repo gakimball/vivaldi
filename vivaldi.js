@@ -30,6 +30,7 @@ var PLAYER_UI = [
   // Seeker bar
   'seeker',
   'seeker-fill',
+  'seeker-jump',
 
   // Track metadata
   'meta'
@@ -322,6 +323,28 @@ Player.MODULES = {
     });
   },
 
+  /**
+   * Seek forward or back in a track by a set amount on click.
+   */
+  'seeker-jump': function(player, ui) {
+    var audio = player.ui.audio[0];
+
+    ui.on('click.vivaldi', function() {
+      var offset = parseInt(this.getAttribute('data-seeker-jump'));
+      var seekLocation = audio.currentTime + offset;
+
+      console.log(offset, seekLocation);
+
+      if (seekLocation < 0) seekLocation = 0;
+      if (seekLocation > audio.duration) seekLocation = audio.duration;
+
+      player.seek(seekLocation.toFixed());
+    });
+  },
+
+  /**
+   * Display the contents of properties on Player.song.
+   */
   'meta': function(player, ui) {
     player.$player.on('trackchange.vivaldi', function(event) {
       for (var key in this.song) {
