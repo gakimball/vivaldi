@@ -1,7 +1,7 @@
 !function($, Vivaldi) {
 
 var SONGS = [];
-var POINTER = 0;
+var POSITION = 0;
 
 Vivaldi.Playlist = {
   getSongs: function() {
@@ -18,6 +18,17 @@ Vivaldi.Playlist = {
 
   clear: function() {
     SONGS = [];
+    POSITION = 0;
+  },
+
+  getPosition: function() {
+    return POSITION;
+  },
+
+  setPosition: function(position) {
+    if (POSITION >= 0 && POSITION < SONGS.length - 1) {
+      POSITION = position;
+    }
   }
 }
 

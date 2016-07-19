@@ -31,4 +31,36 @@ describe('Playlist', function() {
       expect(Playlist.getSongs()).to.have.lengthOf(0);
     });
   });
+
+  describe('getPosition()', function() {
+    it('gets the current playlist position', function() {
+      expect(Playlist.getPosition()).to.be.a('number');
+    });
+  });
+
+  describe('setPosition()', function() {
+    it('sets the current playlist position', function() {
+      Playlist.addSong({ url: 'one' });
+      Playlist.addSong({ url: 'two' });
+      Playlist.setPosition(1);
+
+      expect(Playlist.getPosition()).to.equal(1);
+    });
+
+    it('will ignore negative numbers', function() {
+      Playlist.setPosition(-1);
+
+      expect(Playlist.getPosition()).to.equal(0);
+    });
+
+    it('will ignore indexes higher than the playlist length', function() {
+      Playlist.setPosition(1);
+
+      expect(Playlist.getPosition()).to.equal(0);
+    });
+
+    afterEach(function() {
+      Playlist.clear();
+    });
+  });
 });
