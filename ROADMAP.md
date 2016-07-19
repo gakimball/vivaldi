@@ -16,11 +16,6 @@
 
 ## Playlists
 
-- Global playlist object
-- Song object definition
 - Playlist methods
-  - `add()`
-  - `remove()`
-  - `clear()`
   - `next()`
   - `prev()`

@@ -13,11 +13,16 @@
     <script src="../node_modules/chai/chai.js"></script>
     <script src="../node_modules/chai-jquery/chai-jquery.js"></script>
     <script src="../vivaldi.js"></script>
+    <script src="../vivaldi.playlists.js"></script>
     <script>
       mocha.setup('bdd');
       expect = chai.expect;
+      Player = Vivaldi.Player;
+      Playlist = Vivaldi.Playlist;
+      body = document.body;
     </script>
     <script src="test.js"></script>
+    <script src="playlists.js"></script>
     <script>
       mocha.run();
     </script>

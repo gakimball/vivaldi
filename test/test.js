@@ -1,6 +1,3 @@
-var Player = Vivaldi.Player;
-var body = document.body;
-
 // var AUDIO;
 //
 // before(function(done) {
