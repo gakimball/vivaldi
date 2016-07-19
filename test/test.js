@@ -276,7 +276,7 @@ describe('Player()', function() {
   describe('Player.getSong()', function() {
     var $elem;
 
-    it('calls the global loader function to fetch song metadata', function() {
+    it('calls the global loader function to fetch song metadata', function(done) {
       $elem = $('<div data-player><audio data-audio></div></div>').appendTo('body');
       var p = new Player('[data-player]');
       var song = {
@@ -616,5 +616,24 @@ describe('Vivaldi', function() {
       $elem.remove();
       $clicker.remove();
     })
+  });
+
+  describe('Vivaldi.module()', function() {
+    var $elem;
+
+    it('allows custom player UI to be created', function() {
+      $elem = $('<div data-player><div data-custom></div><audio data-audio></audio></div>').appendTo('body');
+      Vivaldi.module('custom', function(player, ui) {
+        ui.text('Custom');
+      });
+      var p = new Player('[data-player]');
+      p.init();
+
+      expect($elem.children('[data-custom]')).to.have.text('Custom');
+    });
+
+    afterEach(function() {
+      $elem.remove();
+    });
   });
 });

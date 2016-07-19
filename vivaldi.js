@@ -67,8 +67,8 @@ Player.prototype.init = function() {
     if ($elem.length > 0) {
       this.ui[attr] = $elem;
 
-      if (Player.MODULES[attr]) {
-        Player.MODULES[attr](this, this.ui[attr]);
+      if (MODULES[attr]) {
+        MODULES[attr](this, this.ui[attr]);
       }
     }
   }
@@ -229,7 +229,7 @@ Player.prototype.seek = function(time) {
   }
 }
 
-Player.MODULES = {
+MODULES = {
   /**
    * Toggles play state on click.
    */
@@ -450,10 +450,31 @@ Vivaldi = {
    * @param {String} attr - Attribute of click targets.
    * @param {Vivaldi.Player} player - Audio player instance to send the track requests to.
    */
-  inlineTracks(attr, player) {
+  inlineTracks: function(attr, player) {
     $('[' + attr + ']').on('click.vivaldi', function() {
       player.getSong(this.getAttribute(attr));
     });
+  },
+
+  /**
+   * Defines a custom UI module that can be used in any audio player. The name supplied is used as a key in `Player.ui`, and made into an HTML attribute to identify instances of the module, i.e. `data-[name]`.
+   * @param {String} name - Name of the module.
+   * @param {ModuleInitCallback} fn - Function that initializes the module.
+   */
+  module: function(name, fn) {
+    if (typeof name !== 'string' || typeof fn !== 'function') {
+      throw new Error('Vivaldi: must supply a name and function to create a module.');
+    }
+
+    // Add the name to the list of module names
+    if (PLAYER_UI.indexOf(name) < 0) {
+      PLAYER_UI.push(name);
+    }
+
+    // Add the function to the set of module functions
+    var newModule = {};
+    newModule[name] = fn;
+    $.extend(MODULES, newModule);
   },
 
   /**

@@ -2,8 +2,6 @@
 
 ## Player
 
-- Seeker controls
-  - `seeker-jump`
 - Volume controls
   - `volume-bar`
   - `volume-bar-fill`
@@ -14,7 +12,7 @@
 
 ## Parent Player
 
-- Send track to player
+- Child players bind to parent player
 
 ## Playlists
 
