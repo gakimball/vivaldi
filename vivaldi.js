@@ -13,30 +13,6 @@ var ENV_OPTIONS = {
 }
 
 /**
- * Names of possible player UI elements.
- * These strings are used as keys on the player.ui object, and as CSS selectors to locate the matching DOM elements, i.e. data-time-current.
- */
-var PLAYER_UI = [
-  // <audio> source
-  'audio',
-
-  // Play/pause button
-  'play-toggle',
-
-  // Time readout
-  'time-current',
-  'time-total',
-
-  // Seeker bar
-  'seeker',
-  'seeker-fill',
-  'seeker-jump',
-
-  // Track metadata
-  'meta'
-];
-
-/**
  * Creates a new instance of an audio player.
  * @class
  * @param {String|HTMLElement|jQuery} element - CSS selector, DOM element, or jQuery element of the player container.
@@ -60,9 +36,8 @@ function Player(element) {
  */
 Player.prototype.init = function() {
   // Find and store UI elements
-  for (var i in PLAYER_UI) {
-    var attr = PLAYER_UI[i];
-    var $elem = this.$player.find('[data-'+attr+']');
+  for (var attr in MODULES) {
+    var $elem = this.$player.find('[data-' + attr + ']');
 
     if ($elem.length > 0) {
       this.ui[attr] = $elem;
@@ -229,7 +204,12 @@ Player.prototype.seek = function(time) {
   }
 }
 
-MODULES = {
+var MODULES = {
+  /**
+   * HTML Audio element.
+   */
+  'audio': function(player, ui) {},
+
   /**
    * Toggles play state on click.
    */
@@ -464,11 +444,6 @@ Vivaldi = {
   module: function(name, fn) {
     if (typeof name !== 'string' || typeof fn !== 'function') {
       throw new Error('Vivaldi: must supply a name and function to create a module.');
-    }
-
-    // Add the name to the list of module names
-    if (PLAYER_UI.indexOf(name) < 0) {
-      PLAYER_UI.push(name);
     }
 
     // Add the function to the set of module functions
