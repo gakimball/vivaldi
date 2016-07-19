@@ -634,4 +634,30 @@ describe('Vivaldi', function() {
       $elem.remove();
     });
   });
+
+  describe('modules()', function() {
+    var $elem;
+
+    it('allows multiple modules to be defined at once', function() {
+      $elem = $(`
+        <div data-player>
+          <div data-one></div>
+          <div data-two></div>
+          <audio data-audio></audio>
+        </div>
+      `).appendTo(body);
+      var p = new Player($elem);
+      Vivaldi.modules({
+        one: function() {},
+        two: function() {}
+      });
+      p.init();
+
+      expect(p.ui).to.contain.keys('one', 'two');
+    });
+
+    afterEach(function() {
+      $elem.remove();
+    })
+  });
 });

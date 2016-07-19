@@ -452,6 +452,16 @@ Vivaldi.module = function(name, fn) {
 }
 
 /**
+ * Define multiple modules in one method call with an object, where each key is the name of a module, and its value is the initialization function. Refer to `Vivaldi.module()` for more.
+ @param {Object} modules - Modules to load.
+ */
+Vivaldi.modules = function(modules) {
+  for (var name in modules) {
+    Vivaldi.module(name, modules[name]);
+  }
+}
+
+/**
  * Audio player class.
  */
 Vivaldi.Player = Player;
