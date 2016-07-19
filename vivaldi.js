@@ -2,7 +2,7 @@
  * @todo Consider moving player.ui.audio to player.audio as a plain DOM reference
  * @todo Consider calling Player.init in the constructor
  */
-!function($) {
+!function($, Vivaldi) {
 
 /**
  * Global settings for all plugin elements.
@@ -405,57 +405,55 @@ $.fn.vivaldi = function() {
   });
 }
 
-window.Vivaldi = {
-  /**
-   * Set all players to "exclusive" mode, which means only one can be playing audio at a time on the page.
-   */
-  exclusive: function() {
-    ENV_OPTIONS.exclusive = true;
-  },
+/**
+ * Set all players to "exclusive" mode, which means only one can be playing audio at a time on the page.
+ */
+Vivaldi.exclusive = function() {
+  ENV_OPTIONS.exclusive = true;
+}
 
-  /**
-   * Define a loading function to be used when an audio player calls `getSong()`. The last parameter of the function must be a callback which is called with a song metadata object as its parameter.
-   * @param {Function} fn - Loading function.
-   */
-  loader: function(fn) {
-    if (typeof fn !== 'function') {
-      throw new Error('Vivaldi: must supply a function to loader().');
-    }
+/**
+ * Define a loading function to be used when an audio player calls `getSong()`. The last parameter of the function must be a callback which is called with a song metadata object as its parameter.
+ * @param {Function} fn - Loading function.
+ */
+Vivaldi.loader = function(fn) {
+  if (typeof fn !== 'function') {
+    throw new Error('Vivaldi: must supply a function to loader().');
+  }
 
-    ENV_OPTIONS.loader = fn;
-  },
+  ENV_OPTIONS.loader = fn;
+}
 
-  /**
-   * Define elements on the page that can load tracks on an audio player when clicked on. `selector` must be an HTML attribute; this is what will be used to look for click targets. On click, the value of the `selector` attribute is passed to `Player.getSong()` as an argument.
-   * @param {String} attr - Attribute of click targets.
-   * @param {Vivaldi.Player} player - Audio player instance to send the track requests to.
-   */
-  inlineTracks: function(attr, player) {
-    $('[' + attr + ']').on('click.vivaldi', function() {
-      player.getSong(this.getAttribute(attr));
-    });
-  },
+/**
+ * Define elements on the page that can load tracks on an audio player when clicked on. `selector` must be an HTML attribute; this is what will be used to look for click targets. On click, the value of the `selector` attribute is passed to `Player.getSong()` as an argument.
+ * @param {String} attr - Attribute of click targets.
+ * @param {Vivaldi.Player} player - Audio player instance to send the track requests to.
+ */
+Vivaldi.inlineTracks = function(attr, player) {
+  $('[' + attr + ']').on('click.vivaldi', function() {
+    player.getSong(this.getAttribute(attr));
+  });
+}
 
-  /**
-   * Defines a custom UI module that can be used in any audio player. The name supplied is used as a key in `Player.ui`, and made into an HTML attribute to identify instances of the module, i.e. `data-[name]`.
-   * @param {String} name - Name of the module.
-   * @param {ModuleInitCallback} fn - Function that initializes the module.
-   */
-  module: function(name, fn) {
-    if (typeof name !== 'string' || typeof fn !== 'function') {
-      throw new Error('Vivaldi: must supply a name and function to create a module.');
-    }
+/**
+ * Defines a custom UI module that can be used in any audio player. The name supplied is used as a key in `Player.ui`, and made into an HTML attribute to identify instances of the module, i.e. `data-[name]`.
+ * @param {String} name - Name of the module.
+ * @param {ModuleInitCallback} fn - Function that initializes the module.
+ */
+Vivaldi.module = function(name, fn) {
+  if (typeof name !== 'string' || typeof fn !== 'function') {
+    throw new Error('Vivaldi: must supply a name and function to create a module.');
+  }
 
-    // Add the function to the set of module functions
-    var newModule = {};
-    newModule[name] = fn;
-    $.extend(MODULES, newModule);
-  },
+  // Add the function to the set of module functions
+  var newModule = {};
+  newModule[name] = fn;
+  $.extend(MODULES, newModule);
+}
 
-  /**
-   * Audio player class.
-   */
-  Player: Player
-};
+/**
+ * Audio player class.
+ */
+Vivaldi.Player = Player;
 
-}(jQuery)
+}(window.jQuery, window.Vivaldi || (window.Vivaldi = {}));
