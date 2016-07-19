@@ -67,14 +67,13 @@ describe('Player()', function() {
       p.init();
 
       expect(p.ui).to.have.all.keys([
-        'audio',
         'play-toggle',
         'time-current',
         'time-total',
         'seeker',
         'seeker-fill'
       ]);
-      expect(p.ui.audio).to.be.instanceOf(jQuery);
+      expect(p.audio).to.be.instanceOf(HTMLAudioElement);
     });
 
     it('throws an error if the data-audio element does not exist', function() {
@@ -120,7 +119,7 @@ describe('Player()', function() {
       p.init();
       p.load('test.mp3');
 
-      p.ui.audio.on('canplay', function() {
+      $(p.audio).on('canplay', function() {
         expect(p.$player).to.have.class('is-active');
         done();
       });
@@ -161,7 +160,7 @@ describe('Player()', function() {
       p.init();
       p.load('test.mp3', true);
 
-      p.ui.audio.on('play', function() {
+      $(p.audio).on('play', function() {
         done();
       });
     });
@@ -181,7 +180,7 @@ describe('Player()', function() {
       p.init();
       p.load();
 
-      p.ui.audio.on('loadedmetadata', function() {
+      $(p.audio).on('loadedmetadata', function() {
         done();
       });
     });
@@ -192,7 +191,7 @@ describe('Player()', function() {
       p.init();
       p.load(null, true);
 
-      p.ui.audio.on('play', function() {
+      $(p.audio).on('play', function() {
         done();
       });
     });
@@ -204,7 +203,7 @@ describe('Player()', function() {
       p.setSong({ url: 'test.mp3' });
       p.load();
 
-      p.ui.audio.on('loadedmetadata', function() {
+      $(p.audio).on('loadedmetadata', function() {
         done();
       });
     });
@@ -216,7 +215,7 @@ describe('Player()', function() {
       p.setSong({ url: 'test.mp3' });
       p.load(null, true);
 
-      p.ui.audio.on('play', function() {
+      $(p.audio).on('play', function() {
         done();
       });
     });
@@ -323,14 +322,14 @@ describe('Player()', function() {
       p.init();
       p.load('test.mp3');
 
-      p.ui.audio.on('loadeddata', function() {
+      $(p.audio).on('loadeddata', function() {
         done();
       });
     });
 
     it('plays audio', function() {
       p.play();
-      expect(p.ui.audio[0].paused).to.be.false;
+      expect(p.audio.paused).to.be.false;
     });
 
     after(function() {
@@ -352,7 +351,7 @@ describe('Player()', function() {
       p.init();
       p.load('test.mp3');
 
-      p.ui.audio.on('loadeddata', function() {
+      $(p.audio).on('loadeddata', function() {
         p.play();
         done();
       });
@@ -360,7 +359,7 @@ describe('Player()', function() {
 
     it('pauses audio', function() {
       p.pause();
-      expect(p.ui.audio[0].paused).to.be.true;
+      expect(p.audio.paused).to.be.true;
     });
 
     after(function() {
@@ -382,19 +381,19 @@ describe('Player()', function() {
       p.init();
       p.load('test.mp3');
 
-      p.ui.audio.on('loadeddata', function() {
+      $(p.audio).on('loadeddata', function() {
         done();
       });
     });
 
     it('starts playback if audio is paused', function() {
       p.playToggle();
-      expect(p.ui.audio[0].paused).to.be.false;
+      expect(p.audio.paused).to.be.false;
     });
 
     it('pauses playback if audio is playing', function() {
       p.playToggle();
-      expect(p.ui.audio[0].paused).to.be.true;
+      expect(p.audio.paused).to.be.true;
     });
 
     after(function() {
@@ -420,11 +419,11 @@ describe('Player Modules', function() {
       p.init();
       p.load('test.mp3', true);
 
-      p.ui.audio.one('play', function() {
+      $(p.audio).one('play', function() {
         $button.click();
-        expect(p.ui.audio[0].paused).to.be.true;
+        expect(p.audio.paused).to.be.true;
         $button.click();
-        expect(p.ui.audio[0].paused).to.be.false;
+        expect(p.audio.paused).to.be.false;
 
         done();
       });
@@ -443,7 +442,7 @@ describe('Player Modules', function() {
       var p = new Player($elem);
       p.init();
 
-      p.ui.audio.on('durationchange', function() {
+      $(p.audio).on('durationchange', function() {
         expect(p.ui['time-total']).to.have.text('0:08');
         done();
       });
@@ -467,10 +466,10 @@ describe('Player Modules', function() {
       var p = new Player($elem);
       p.init();
 
-      p.ui.audio.on('timeupdate.test', function() {
-        if (p.ui.audio[0].currentTime >= 1) {
+      $(p.audio).on('timeupdate.test', function() {
+        if (p.audio.currentTime >= 1) {
           expect(p.ui['time-current']).to.have.text('0:01');
-          p.ui.audio.off('timeupdate.test');
+          $(p.audio).off('timeupdate.test');
           done();
         }
       });
@@ -534,7 +533,7 @@ describe('Player Options', function() {
       var p = new Player($elem);
       p.init();
 
-      p.ui.audio.on('loadstart', function() {
+      $(p.audio).on('loadstart', function() {
         done();
       });
     });
@@ -555,7 +554,7 @@ describe('Player Options', function() {
       var p = new Player($elem);
       p.init();
 
-      p.ui.audio.on('play', function() {
+      $(p.audio).on('play', function() {
         done();
       });
     });
@@ -566,7 +565,7 @@ describe('Player Options', function() {
       p.init();
       p.load('test.mp3');
 
-      p.ui.audio.on('play', function() {
+      $(p.audio).on('play', function() {
         done();
       });
     });

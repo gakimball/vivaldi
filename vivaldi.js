@@ -1,5 +1,4 @@
 /**
- * @todo Consider moving player.ui.audio to player.audio as a plain DOM reference
  * @todo Consider calling Player.init in the constructor
  * @todo Consider removing the autoload and autoplay options and using <audio>'s equivalents instead
  */
@@ -26,12 +25,39 @@ function Player(element) {
     console.warn('Vivaldi: tried to initialize a player twice on element ' + element);
   }
 
+  /**
+   * Player container element.
+   * @type jQuery
+   */
   this.$player = $(element);
+
+  /**
+   * UI elements in use by the player. Each key is the name of the control (the attribute used to activate it without `data-`), and the value is the corresponding jQuery object.
+   * @type Object
+   */
   this.ui = {};
+
+  /**
+   * DOM element of the player's `<audio>`.
+   * @type HTMLAudioElement
+   */
+  this.audio = null;
+
+  /**
+   * Current loaded song, for use if the player can play multiple songs.
+   * @type Object | null
+   */
   this.song = null;
+
+  /**
+   * Player state not covered by `<audio>`.
+   * @type Object
+   */
   this.state = {
     seeking: false
   };
+
+  // Add this class instance as an attribute of the player container. This allows it to be accessed if the player was initialized with $.fn.vivaldi().
   this.$player.data('vivaldi', this);
 }
 
@@ -39,6 +65,20 @@ function Player(element) {
  * Initialize the player by finding UI elements and storing them in a UI object.
  */
 Player.prototype.init = function() {
+  // Find and store the <audio> element
+  this.audio = this.$player.find('[data-audio]')[0];
+
+  // The <audio> element is required
+  if (typeof this.audio !== 'undefined') {
+    // And it has to be <audio>
+    if (this.audio.nodeName !== 'AUDIO') {
+      throw new Error('Vivaldi Error: the data-audio element must be <audio>.');
+    }
+  }
+  else {
+    throw new Error('Vivaldi Error: player is missing an <audio data-audio> element.');
+  }
+
   // Find and store UI elements
   for (var attr in MODULES) {
     var $elem = this.$player.find('[data-' + attr + ']');
@@ -52,22 +92,11 @@ Player.prototype.init = function() {
     }
   }
 
-  // The data-audio element is required
-  if ('audio' in this.ui) {
-    // And it has to be <audio>
-    if (this.ui['audio'][0].nodeName !== 'AUDIO') {
-      throw new Error('Vivaldi Error: the data-audio element must be <audio>.');
-    }
-  }
-  else {
-    throw new Error('Vivaldi Error: player is missing an <audio data-audio> element.');
-  }
-
   // Compile options
   this.options = Player.util.getOptions(this.$player.attr('data-options'), Player.OPTIONS);
 
   // Set basic events
-  this.ui.audio.on({
+  $(this.audio).on({
     loadeddata: function() {
       this.$player.addClass('is-active');
     }.bind(this),
@@ -118,11 +147,11 @@ Player.prototype.load = function(source, autoplay) {
   // Create a <source> element for the <audio>
   var sourceElement = document.createElement('source');
   sourceElement.setAttribute('src', source);
-  this.ui.audio[0].appendChild(sourceElement);
+  this.audio.appendChild(sourceElement);
 
   // Auto-play if set to do so
   if (autoplay || this.options.autoplay) {
-    this.ui.audio.on('canplay.vivaldi', function() {
+    $(this.audio).on('canplay.vivaldi', function() {
       this.play();
     }.bind(this));
   }
@@ -166,7 +195,7 @@ Player.prototype.getSong = function() {
  * Start or resume playback on the player.
  */
 Player.prototype.play = function() {
-  this.ui.audio[0].play();
+  this.audio.play();
 
   if (ENV_OPTIONS.exclusive) {
     this.$player.trigger('playing.vivaldi');
@@ -177,14 +206,14 @@ Player.prototype.play = function() {
  * Pause playback on the player.
  */
 Player.prototype.pause = function() {
-  this.ui.audio[0].pause();
+  this.audio.pause();
 }
 
 /**
  * Start playback if audio is paused, or pause playback if audio is playing.
  */
 Player.prototype.playToggle = function() {
-  if (this.ui.audio[0].paused) {
+  if (this.audio.paused) {
     this.play();
   }
   else {
@@ -196,7 +225,7 @@ Player.prototype.playToggle = function() {
  * Seek to the given time in the track. The time can be given as an integer, which is a number of seconds, or a decimal, which is a percentage of the track's total length.
  */
 Player.prototype.seek = function(time) {
-  var audio = this.ui.audio[0];
+  var audio = this.audio;
 
   // Decimal values
   if (time % 1 != 0) {
@@ -209,11 +238,6 @@ Player.prototype.seek = function(time) {
 }
 
 var MODULES = {
-  /**
-   * HTML Audio element.
-   */
-  'audio': function(player, ui) {},
-
   /**
    * Toggles play state on click.
    */
@@ -231,8 +255,8 @@ var MODULES = {
     ui.text('0:00');
 
     // When a new audio file is loaded, set the time
-    player.ui.audio.on('durationchange.vivaldi', function() {
-      var time = Player.util.formatTime(player.ui.audio[0].duration);
+    $(player.audio).on('durationchange.vivaldi', function() {
+      var time = Player.util.formatTime(player.audio.duration);
       ui.text(time);
     });
   },
@@ -246,16 +270,16 @@ var MODULES = {
     ui.text('0:00');
 
     // When the duration changes, change the text
-    player.ui.audio.on('timeupdate.vivaldi', function() {
+    $(player.audio).on('timeupdate.vivaldi', function() {
       if (!player.state.seeking) {
-        var time = Player.util.formatTime(player.ui.audio[0].currentTime);
+        var time = Player.util.formatTime(player.audio.currentTime);
         ui.text(time);
       }
     });
 
     // While the user is seeking, change the text
     player.$player.on('seekerupdate.vivaldi', function(event, pct) {
-      var time = (pct * player.ui.audio[0].duration).toFixed();
+      var time = (pct * player.audio.duration).toFixed();
       time = Player.util.formatTime(time);
       ui.text(time);
     });
@@ -266,7 +290,7 @@ var MODULES = {
    * @todo Prevent autoplay after seeking if audio was already paused
    */
   'seeker': function(player, ui) {
-    var audio = player.ui.audio[0];
+    var audio = player.audio;
 
     // On mousedown, the player enters a seeking state.
     ui.on('mousedown.vivaldi', function(event) {
@@ -294,9 +318,9 @@ var MODULES = {
    */
   'seeker-fill': function(player, ui) {
     // Update the fill as the track's elapsed time changes
-    player.ui.audio.on('timeupdate.vivaldi', function() {
+    $(player.audio).on('timeupdate.vivaldi', function() {
       if (!player.state.seeking) {
-        var pct = (player.ui.audio[0].currentTime / player.ui.audio[0].duration).toFixed(3);
+        var pct = (player.audio.currentTime / player.audio.duration).toFixed(3);
         ui.css('transform', 'scaleX(' + pct + ')');
       }
     });
@@ -311,7 +335,7 @@ var MODULES = {
    * Seek forward or back in a track by a set amount on click.
    */
   'seeker-jump': function(player, ui) {
-    var audio = player.ui.audio[0];
+    var audio = player.audio;
 
     ui.on('click.vivaldi', function() {
       // "n" is a jump forward, "-n" is a jump backward

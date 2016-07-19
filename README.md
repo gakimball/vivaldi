@@ -99,7 +99,7 @@ To jump around in the music, use the `seek()` method, and give it a number in se
 player.seek(87); // And God only knows what I'd be without you
 ```
 
-The HTML Audio element has a lot of built-in methods and properties of its own. To access the DOM element of the player's `<audio>` element, use `player.ui.audio`.
+The HTML Audio element has a lot of built-in methods and properties of its own. To access the DOM element of the player's `<audio>` element, use `player.audio`.
 
 ## Player Controls
 
