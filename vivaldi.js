@@ -1,6 +1,6 @@
 /**
  * @todo Consider calling Player.init in the constructor
- * @todo Consider removing the autoload and autoplay options and using <audio>'s equivalents instead
+ * @todo Consider renaming "module" to "control", may be easier to understand
  */
 !function($, Vivaldi) {
 
