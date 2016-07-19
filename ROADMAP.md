@@ -16,6 +16,4 @@
 
 ## Playlists
 
-- Playlist methods
-  - `next()`
-  - `prev()`
+- Playlist readout

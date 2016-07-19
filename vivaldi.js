@@ -1,6 +1,7 @@
 /**
  * @todo Consider moving player.ui.audio to player.audio as a plain DOM reference
  * @todo Consider calling Player.init in the constructor
+ * @todo Consider removing the autoload and autoplay options and using <audio>'s equivalents instead
  */
 !function($, Vivaldi) {
 
@@ -9,7 +10,10 @@
  */
 var ENV_OPTIONS = {
   // If true, only one player on a page can play audio at a time.
-  exclusive: false
+  exclusive: false,
+
+  // If true, the player will pull song data from the playlists module.
+  playlists: false
 }
 
 /**
@@ -459,6 +463,17 @@ Vivaldi.modules = function(modules) {
   for (var name in modules) {
     Vivaldi.module(name, modules[name]);
   }
+}
+
+/**
+ * Enable playlist support.
+ */
+Vivaldi.playlists = function() {
+  if (!Vivaldi.Playlist) {
+    throw new Error('Vivaldi: cannot find Playlists module. Make sure vivaldi.playlists.js is included in your scripts.');
+  }
+
+  ENV_OPTIONS.playlists = true;
 }
 
 /**
