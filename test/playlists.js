@@ -63,4 +63,103 @@ describe('Playlist', function() {
       Playlist.clear();
     });
   });
+
+  describe('next()', function() {
+    it('increments the playlist position', function() {
+      Playlist.addSong({});
+      Playlist.addSong({});
+      Playlist.next();
+
+      expect(Playlist.getPosition()).to.equal(1);
+    });
+
+    it('will not increment past the end of the playlist', function() {
+      Playlist.addSong({});
+      Playlist.next();
+
+      expect(Playlist.getPosition()).to.equal(0);
+    });
+
+    afterEach(function() {
+      Playlist.clear();
+    });
+  });
+
+  describe('prev()', function() {
+    it('decrements the playlist position', function() {
+      Playlist.addSong({});
+      Playlist.addSong({});
+      Playlist.setPosition(1);
+      Playlist.prev();
+
+      expect(Playlist.getPosition()).to.equal(0);
+    });
+
+    it('will not decrement past zero', function() {
+      Playlist.prev();
+
+      expect(Playlist.getPosition()).to.equal(0);
+    });
+
+    afterEach(function() {
+      Playlist.clear();
+    });
+  });
+});
+
+describe('Playlist Modules', function() {
+  describe('next', function() {
+    var $elem, p;
+
+    before(function() {
+      Playlist.addSong({});
+      Playlist.addSong({});
+      $elem = $(`
+        <div data-player>
+          <button data-next>Next</button>
+          <audio data-audio></audio>
+        </div>
+      `).appendTo(body);
+      p = new Player($elem);
+      p.init();
+    });
+
+    it('increments the playlist pointer on click', function() {
+      $elem.find('button').click();
+      expect(Playlist.getPosition()).to.equal(1);
+    });
+
+    after(function() {
+      Playlist.clear();
+      $elem.remove();
+    })
+  });
+
+  describe('prev', function() {
+    var $elem, p;
+
+    before(function() {
+      Playlist.addSong({});
+      Playlist.addSong({});
+      Playlist.setPosition(1);
+      $elem = $(`
+        <div data-player>
+          <button data-prev>Prev</button>
+          <audio data-audio></audio>
+        </div>
+      `).appendTo(body);
+      p = new Player($elem);
+      p.init();
+    });
+
+    it.only('decrements the playlist pointer on click', function() {
+      $elem.find('button').click();
+      expect(Playlist.getPosition()).to.equal(0);
+    });
+
+    after(function() {
+      Playlist.clear();
+      $elem.remove();
+    })
+  });
 });

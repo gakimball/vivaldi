@@ -29,7 +29,33 @@ Vivaldi.Playlist = {
     if (POSITION >= 0 && POSITION < SONGS.length - 1) {
       POSITION = position;
     }
+  },
+
+  next: function() {
+    if (POSITION < SONGS.length - 1) {
+      POSITION++;
+    }
+  },
+
+  prev: function() {
+    if (POSITION > 0) {
+      POSITION--;
+    }
   }
 }
+
+Vivaldi.modules({
+  'next': function(player, ui) {
+    ui.on('click.vivaldi', function() {
+      Playlist.next();
+    });
+  },
+
+  'prev': function(player, ui) {
+    ui.on('click.vivaldi', function() {
+      Playlist.prev();
+    });
+  }
+});
 
 }(window.jQuery, window.Vivaldi || (window.Vivaldi = {}));
