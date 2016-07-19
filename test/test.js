@@ -1,4 +1,5 @@
 var Player = Vivaldi.Player;
+var body = document.body;
 
 // var AUDIO;
 //
@@ -16,7 +17,7 @@ describe('jQuery.fn.vivaldi', function() {
   var $elem;
 
   it('initializes a player', function() {
-    $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
+    $elem = $('<div data-player><audio data-audio></audio></div>').appendTo(body);
     $elem.vivaldi();
 
     expect($elem).to.be.an.instanceOf(jQuery);
@@ -35,8 +36,8 @@ describe('Player()', function() {
   });
 
   it('creates a new instance of a Player', function() {
-    $elem = $('<div data-player></div>').appendTo('body');
-    var p = new Player('[data-player]');
+    $elem = $('<div data-player></div>').appendTo(body);
+    var p = new Player($elem);
 
     expect(p).to.be.an.instanceOf(Player);
     expect(p.$player).to.have.length(1);
@@ -47,7 +48,7 @@ describe('Player()', function() {
     $elem.remove();
   });
 
-  describe('Player.init()', function() {
+  describe('init()', function() {
     var $elem;
 
     it('finds UI elements and stores them in an object', function() {
@@ -64,8 +65,8 @@ describe('Player()', function() {
         </div>
       `;
 
-      $elem = $(TEMPLATE).appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $(TEMPLATE).appendTo(body);
+      var p = new Player($elem);
       p.init();
 
       expect(p.ui).to.have.all.keys([
@@ -80,8 +81,8 @@ describe('Player()', function() {
     });
 
     it('throws an error if the data-audio element does not exist', function() {
-      $elem = $('<div data-player></div>').appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $('<div data-player></div>').appendTo(body);
+      var p = new Player($elem);
 
       expect(function() {
         p.init();
@@ -89,8 +90,8 @@ describe('Player()', function() {
     });
 
     it('throws an error if the data-audio element is not <audio>', function() {
-      $elem = $('<div data-player><div data-audio></div></div>').appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $('<div data-player><div data-audio></div></div>').appendTo(body);
+      var p = new Player($elem);
 
       expect(function() {
         p.init();
@@ -98,16 +99,16 @@ describe('Player()', function() {
     });
 
     it('creates an options object for a player without data-options', function() {
-      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo(body);
+      var p = new Player($elem);
       p.init();
 
       expect(p.options).to.eql({ autoload: false, autoplay: false });
     });
 
     it('creates an options object for a player with data-options', function() {
-      $elem = $('<div data-player data-options="autoload"><audio data-audio></audio></div>').appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $('<div data-player data-options="autoload"><audio data-audio></audio></div>').appendTo(body);
+      var p = new Player($elem);
       p.init();
 
       expect(p.options).to.eql({ autoload: true, autoplay: false });
@@ -117,8 +118,8 @@ describe('Player()', function() {
      * @todo Add tests for .is-playing and .is-paused classes
      */
     it('sets up event handlers to toggle classes on various state changes', function(done) {
-      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo(body);
+      var p = new Player($elem);
       p.init();
       p.load('test.mp3');
 
@@ -133,7 +134,7 @@ describe('Player()', function() {
     })
   });
 
-  describe('Player.load()', function() {
+  describe('load()', function() {
     var $elem;
 
     it('appends a <source> element to the <audio> of the player', function() {
@@ -142,8 +143,8 @@ describe('Player()', function() {
           <audio data-audio></audio>
         </div>
       `;
-      $elem = $(TEMPLATE).appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $(TEMPLATE).appendTo(body);
+      var p = new Player($elem);
       p.init();
       p.load('test.mp3');
 
@@ -158,8 +159,8 @@ describe('Player()', function() {
           <audio data-audio></audio>
         </div>
       `;
-      $elem = $(TEMPLATE).appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $(TEMPLATE).appendTo(body);
+      var p = new Player($elem);
       p.init();
       p.load('test.mp3', true);
 
@@ -171,15 +172,15 @@ describe('Player()', function() {
     xit('accepts a data URI instead of a URL as an audio source', function(done) {
       this.timeout(0);
 
-      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
-      window.p = new Player('[data-player]');
+      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo(body);
+      window.p = new Player($elem);
       p.init();
       p.load(AUDIO, true);
     });
 
     it('can be called with no parameters if the player has a data-src attribute', function(done) {
-      $elem = $('<div data-player data-src="test.mp3"><audio data-audio></audio></div>').appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $('<div data-player data-src="test.mp3"><audio data-audio></audio></div>').appendTo(body);
+      var p = new Player($elem);
       p.init();
       p.load();
 
@@ -189,8 +190,8 @@ describe('Player()', function() {
     });
 
     it('can be called with a null parameter if the player has a data-src attribute', function(done) {
-      $elem = $('<div data-player data-src="test.mp3"><audio data-audio></audio></div>').appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $('<div data-player data-src="test.mp3"><audio data-audio></audio></div>').appendTo(body);
+      var p = new Player($elem);
       p.init();
       p.load(null, true);
 
@@ -200,8 +201,8 @@ describe('Player()', function() {
     });
 
     it('can be called with no parameters if the player has song metadata', function(done) {
-      $elem = $('<div data-player data-src="test.mp3"><audio data-audio></audio></div>').appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $('<div data-player data-src="test.mp3"><audio data-audio></audio></div>').appendTo(body);
+      var p = new Player($elem);
       p.init();
       p.setSong({ url: 'test.mp3' });
       p.load();
@@ -212,8 +213,8 @@ describe('Player()', function() {
     });
 
     it('can be called with a null parameter if the player has song metadata', function(done) {
-      $elem = $('<div data-player data-src="test.mp3"><audio data-audio></audio></div>').appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $('<div data-player data-src="test.mp3"><audio data-audio></audio></div>').appendTo(body);
+      var p = new Player($elem);
       p.init();
       p.setSong({ url: 'test.mp3' });
       p.load(null, true);
@@ -228,12 +229,12 @@ describe('Player()', function() {
     });
   });
 
-  describe('Player.setSong()', function() {
+  describe('setSong()', function() {
     var $elem;
 
     it('sets the input song to the Player.song property', function() {
-      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo(body);
+      var p = new Player($elem);
       var song = {
         url: 'test.mp3'
       };
@@ -244,8 +245,8 @@ describe('Player()', function() {
     });
 
     it('ignores non-object input', function() {
-      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo(body);
+      var p = new Player($elem);
       p.init();
 
       p.setSong(0);
@@ -259,8 +260,8 @@ describe('Player()', function() {
     });
 
     it('throws an error if the song has no URL parameter', function() {
-      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo(body);
+      var p = new Player($elem);
       p.init();
 
       expect(function() {
@@ -273,12 +274,12 @@ describe('Player()', function() {
     });
   });
 
-  describe('Player.getSong()', function() {
+  describe('getSong()', function() {
     var $elem;
 
     it('calls the global loader function to fetch song metadata', function(done) {
-      $elem = $('<div data-player><audio data-audio></div></div>').appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $('<div data-player><audio data-audio></div></div>').appendTo(body);
+      var p = new Player($elem);
       var song = {
         url: 'test.mp3'
       };
@@ -297,8 +298,8 @@ describe('Player()', function() {
     });
 
     it('fails if a loader function has not been set', function() {
-      $elem = $('<div data-player><audio data-audio></div></div>').appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $('<div data-player><audio data-audio></div></div>').appendTo(body);
+      var p = new Player($elem);
       p.init();
 
       expect(function() {
@@ -311,7 +312,7 @@ describe('Player()', function() {
     });
   });
 
-  describe('Player.play()', function() {
+  describe('play()', function() {
     var p, $elem;
 
     before(function(done) {
@@ -320,8 +321,8 @@ describe('Player()', function() {
           <audio data-audio></audio>
         </div>
       `;
-      $elem = $(TEMPLATE).appendTo('body');
-      p = new Player('[data-player]');
+      $elem = $(TEMPLATE).appendTo(body);
+      p = new Player($elem);
       p.init();
       p.load('test.mp3');
 
@@ -340,7 +341,7 @@ describe('Player()', function() {
     })
   });
 
-  describe('Player.pause()', function() {
+  describe('pause()', function() {
     var p, $elem;
 
     before(function(done) {
@@ -349,8 +350,8 @@ describe('Player()', function() {
           <audio data-audio></audio>
         </div>
       `;
-      $elem = $(TEMPLATE).appendTo('body');
-      p = new Player('[data-player]');
+      $elem = $(TEMPLATE).appendTo(body);
+      p = new Player($elem);
       p.init();
       p.load('test.mp3');
 
@@ -370,7 +371,7 @@ describe('Player()', function() {
     })
   });
 
-  describe('Player.playToggle()', function() {
+  describe('playToggle()', function() {
     var p, $elem;
 
     before(function(done) {
@@ -379,8 +380,8 @@ describe('Player()', function() {
           <audio data-audio></audio>
         </div>
       `;
-      $elem = $(TEMPLATE).appendTo('body');
-      p = new Player('[data-player]');
+      $elem = $(TEMPLATE).appendTo(body);
+      p = new Player($elem);
       p.init();
       p.load('test.mp3');
 
@@ -416,9 +417,9 @@ describe('Player Modules', function() {
           <audio data-audio></audio>
         </div>
       `;
-      $elem = $(TEMPLATE).appendTo('body');
+      $elem = $(TEMPLATE).appendTo(body);
       var $button = $elem.find('button');
-      var p = new Player('[data-player]');
+      var p = new Player($elem);
       p.init();
       p.load('test.mp3', true);
 
@@ -441,8 +442,8 @@ describe('Player Modules', function() {
           <span data-time-total></span>
         </div>
       `;
-      $elem = $(TEMPLATE).appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $(TEMPLATE).appendTo(body);
+      var p = new Player($elem);
       p.init();
 
       p.ui.audio.on('durationchange', function() {
@@ -465,8 +466,8 @@ describe('Player Modules', function() {
           <span data-time-total></span>
         </div>
       `;
-      $elem = $(TEMPLATE).appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $(TEMPLATE).appendTo(body);
+      var p = new Player($elem);
       p.init();
 
       p.ui.audio.on('timeupdate.test', function() {
@@ -483,8 +484,8 @@ describe('Player Modules', function() {
 
   describe('meta', function() {
     it('displays the contents of properties on player.song', function() {
-      $elem = $('<div data-player><div data-meta="title"></div><audio data-audio></audio></div>').appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $('<div data-player><div data-meta="title"></div><audio data-audio></audio></div>').appendTo(body);
+      var p = new Player($elem);
       p.init();
       p.setSong({
         url: 'test.mp3',
@@ -532,8 +533,8 @@ describe('Player Options', function() {
 
   describe('autoload', function() {
     it('automatically begins loading a track on document ready', function(done) {
-      $elem = $('<div data-player data-src="test.mp3" data-options="autoload"><audio data-audio></audio></div>').appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $('<div data-player data-src="test.mp3" data-options="autoload"><audio data-audio></audio></div>').appendTo(body);
+      var p = new Player($elem);
       p.init();
 
       p.ui.audio.on('loadstart', function() {
@@ -542,8 +543,8 @@ describe('Player Options', function() {
     });
 
     it('will not autoload if no data-src attribute is present', function() {
-      $elem = $('<div data-player data-options="autoload"><audio data-audio></audio></div>').appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $('<div data-player data-options="autoload"><audio data-audio></audio></div>').appendTo(body);
+      var p = new Player($elem);
 
       expect(function() {
         p.init()
@@ -553,8 +554,8 @@ describe('Player Options', function() {
 
   describe('autoplay', function() {
     it('will autoplay a track with data-src and the autoload option', function(done) {
-      $elem = $('<div data-player data-src="test.mp3" data-options="autoload autoplay"><audio data-audio></audio></div>').appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $('<div data-player data-src="test.mp3" data-options="autoload autoplay"><audio data-audio></audio></div>').appendTo(body);
+      var p = new Player($elem);
       p.init();
 
       p.ui.audio.on('play', function() {
@@ -563,8 +564,8 @@ describe('Player Options', function() {
     });
 
     it('will autoplay a track with data-src and no autoload option', function(done) {
-      $elem = $('<div data-player data-options="autoplay"><audio data-audio></audio></div>').appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $('<div data-player data-options="autoplay"><audio data-audio></audio></div>').appendTo(body);
+      var p = new Player($elem);
       p.init();
       p.load('test.mp3');
 
@@ -580,7 +581,7 @@ describe('Player Options', function() {
 });
 
 describe('Vivaldi', function() {
-  describe('Vivaldi.loader()', function() {
+  describe('loader()', function() {
     it('only allows functions to be passed as parameters', function() {
       expect(function() {
         Vivaldi.loader(null);
@@ -588,13 +589,13 @@ describe('Vivaldi', function() {
     });
   });
 
-  describe('Vivaldi.inlineTracks()', function() {
+  describe('inlineTracks()', function() {
     var $elem, $clicker;
 
     it('creates click targets to load song metadata', function() {
-      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo('body');
-      $clicker = $('<button data-track="test">Button!</button>').appendTo('body');
-      var p = new Player('[data-player]');
+      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo(body);
+      $clicker = $('<button data-track="test">Button!</button>').appendTo(body);
+      var p = new Player($elem);
       p.init();
 
       Vivaldi.loader(function(text, cb) {
@@ -618,15 +619,15 @@ describe('Vivaldi', function() {
     })
   });
 
-  describe('Vivaldi.module()', function() {
+  describe('module()', function() {
     var $elem;
 
     it('allows custom player UI to be created', function() {
-      $elem = $('<div data-player><div data-custom></div><audio data-audio></audio></div>').appendTo('body');
+      $elem = $('<div data-player><div data-custom></div><audio data-audio></audio></div>').appendTo(body);
       Vivaldi.module('custom', function(player, ui) {
         ui.text('Custom');
       });
-      var p = new Player('[data-player]');
+      var p = new Player($elem);
       p.init();
 
       expect($elem.children('[data-custom]')).to.have.text('Custom');
