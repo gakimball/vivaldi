@@ -92,9 +92,6 @@ Player.prototype.init = function() {
     }
   }
 
-  // Compile options
-  this.options = Player.util.getOptions(this.$player.attr('data-options'), Player.OPTIONS);
-
   // Set basic events
   $(this.audio).on({
     loadeddata: function() {
@@ -119,21 +116,17 @@ Player.prototype.init = function() {
       }
     }.bind(this));
   }
-
-  // Auto-load track if data-src is defined on the player container
-  if (this.$player.attr('data-src') && this.options.autoload) {
-    this.load(this.$player.attr('data-src'), this.options.autoplay);
-  }
 }
 
 /**
- * Loads an audio file. The audio can be set to automatically play once enough of it has loaded.
+ * Loads an audio file. The URL of the file can be passed in to this function. Or, by omitting a source, the player will try to load a file from:
+ *   - The value of the `data-src` attribute on the player container.
+ *   - The `url` property of the current song, loaded through `Player.setSong()` or `Player.getSong()`.
  * @param {String} source - URL to the audio source.
- * @param {Boolean} autoplay [false] - If `true`, the audio will auto-play after being loaded.
  * @todo Infer MIME type from extension and add that to <source> also
  * @todo Remove old <source> elements when called again
  */
-Player.prototype.load = function(source, autoplay) {
+Player.prototype.load = function(source) {
   // If no source is given, try to load first from data-src, then from player.song.url
   if (source === null || source === undefined) {
     if (typeof this.$player.attr('data-src') !== 'undefined') {
@@ -148,13 +141,6 @@ Player.prototype.load = function(source, autoplay) {
   var sourceElement = document.createElement('source');
   sourceElement.setAttribute('src', source);
   this.audio.appendChild(sourceElement);
-
-  // Auto-play if set to do so
-  if (autoplay || this.options.autoplay) {
-    $(this.audio).on('canplay.vivaldi', function() {
-      this.play();
-    }.bind(this));
-  }
 }
 
 /**
@@ -362,17 +348,8 @@ var MODULES = {
   }
 }
 
-Player.OPTIONS = [
-  /**
-   * A player with data-src will start loading on document ready.
-   */
-  'autoload',
-
-  /**
-   * A player will start playing a track once enough of it has buffered.
-   */
-  'autoplay'
-]
+// Currently unused
+Player.OPTIONS = []
 
 Player.util = {
   /**

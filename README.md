@@ -61,19 +61,36 @@ To load a file in JavaScript, use the `load()` method.
 player.load('path/to/track.mp3');
 ```
 
-This function has a second parameter to enable auto-play. The track will begin playing as soon as enough of it has buffered.
-
-```js
-player.load('path/to/track.mp3', true);
-```
-
 You can also plant a URL in the HTML of the player, by adding the `data-src` attribute. Then call the `load()` method without any arguments to pull the URL off the player's HTML.
 
 ```js
 player.load();
+```
 
-// Want autoplay also?
-player.load(null, true);
+To play the track as soon as enough of it has loaded, add the `autoplay` attribute to the player's `<audio>` element.
+
+```html
+<div id="player">
+  <audio data-audio autoplay></audio>
+</div>
+```
+
+If you instead add the `preload` attribute to `<audio>`, the player will start buffering the track automatically on page load.
+
+```html
+<div id="player">
+  <audio data-audio preload></audio>
+</div>
+```
+
+**This isn't recommended, as you risk chewing through someone's cellular data plan.** However, you can instead use `preload="metadata"`, which will preload track metadata only, and not any actual audio. This is useful if your player displays the length of the track.
+
+```html
+<div id="player">
+  <!-- This will fill in with the correct time on page load -->
+  <p data-time-total></p>
+  <audio data-audio preload="metadata"></audio>
+</div>
 ```
 
 ### Playback Controls
