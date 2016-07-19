@@ -444,7 +444,7 @@ describe('Player Modules', function() {
       p.init();
 
       p.ui.audio.on('durationchange', function() {
-        expect(p.ui['time-total']).to.have.text('3:38');
+        expect(p.ui['time-total']).to.have.text('0:08');
         done();
       });
 

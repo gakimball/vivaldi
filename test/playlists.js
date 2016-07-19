@@ -152,7 +152,7 @@ describe('Playlist Modules', function() {
       p.init();
     });
 
-    it.only('decrements the playlist pointer on click', function() {
+    it('decrements the playlist pointer on click', function() {
       $elem.find('button').click();
       expect(Playlist.getPosition()).to.equal(0);
     });
