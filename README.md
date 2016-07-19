@@ -186,6 +186,16 @@ The `meta` module displays data about the current track, such as title, artist, 
 </div>
 ```
 
+## Local Development
+
+```bash
+git clone https://github.com/gakimball/vivaldi
+cd vivaldi
+npm install
+```
+
+Run tests by opening `test/index.html` in your browser.
+
 ## Colophon
 
 Vivaldi is maintained by [Geoff Kimball](http://geoffkimball.com).
