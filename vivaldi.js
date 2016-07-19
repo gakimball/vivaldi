@@ -405,7 +405,7 @@ $.fn.vivaldi = function() {
   });
 }
 
-Vivaldi = {
+window.Vivaldi = {
   /**
    * Set all players to "exclusive" mode, which means only one can be playing audio at a time on the page.
    */
