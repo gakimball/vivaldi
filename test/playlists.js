@@ -160,6 +160,44 @@ describe('Playlist Modules', function() {
     after(function() {
       Playlist.clear();
       $elem.remove();
+    });
+  });
+
+  describe('playlist', function() {
+    var $elem;
+
+    it('renders the playlist contents according to an HTML template', function() {
+      $elem = $(`
+        <div data-player>
+          <audio data-audio></audio>
+          <ul data-playlist></ul>
+        </div>
+      `).appendTo(body);
+
+      Playlist.addSong({
+        url: 'test.mp3',
+        title: 'Title 1'
+      });
+      Playlist.addSong({
+        url: 'test.mp3',
+        title: 'Title 2'
+      });
+
+      Playlist.template(function(song) {
+        return '<li>' + song.title + '</li>';
+      });
+
+      var p = new Player($elem);
+      p.init();
+
+      expect($elem.find('li')).to.have.lengthOf(2);
+      expect($elem.find('li').eq(0).text()).to.equal('Title 1');
+      expect($elem.find('li').eq(1).text()).to.equal('Title 2');
+    });
+
+    afterEach(function() {
+      Playlist.clear();
+      $elem.remove();
     })
   });
 });

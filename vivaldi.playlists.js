@@ -2,6 +2,7 @@
 
 var SONGS = [];
 var POSITION = 0;
+var TEMPLATE = function() {};
 
 /**
  * Vivaldi playlist module.
@@ -72,6 +73,14 @@ Vivaldi.Playlist = {
     if (POSITION > 0) {
       POSITION--;
     }
+  },
+
+  /**
+   * Define the function that renders a playlist in HTML.
+   * @function {TemplateRenderCallback} Callback that parses each song in the playlist.
+   */
+  template: function(fn) {
+    TEMPLATE = fn;
   }
 }
 
@@ -92,6 +101,20 @@ Vivaldi.modules({
     ui.on('click.vivaldi', function() {
       Playlist.prev();
     });
+  },
+
+  /**
+   * Renders the contents of the playlist.
+   */
+  'playlist': function(player, ui) {
+    if (typeof TEMPLATE !== 'function') {
+      throw new Error('Vivaldi.Playlist: must define a playlist template with Vivaldi.Playlist.template()');
+    }
+
+    ui.empty();
+    ui.append(SONGS.map(function(song) {
+      return $(TEMPLATE(song));
+    }));
   }
 });
 
