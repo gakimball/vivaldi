@@ -203,6 +203,137 @@ The `meta` module displays data about the current track, such as title, artist, 
 </div>
 ```
 
+## Playlists
+
+An audio player stores just one track at a time. The optional Playlist module allows you to store a playlist of songs, accessible by players.
+
+To use it, add `vivaldi.playlists.js` to your page. The `Playlist` object on the window controls a global playlist.
+
+### Methods
+
+#### getSongs()
+
+Get the playlist contents as an array of objects.
+
+```js
+Playlist.getSongs(); // => [{ url: 'pet-sounds.mp3' }, ...]
+```
+
+#### addSong(song)
+
+Add a song to the end of the playlist. Like with the basic player, a song can be an object of any shape, but it must have a `url` property.
+
+```js
+Playlist.addSong({
+  url: 'pet-sounds.mp3',
+  title: 'Pet Sounds',
+  artist: 'The Beach Boys'
+});
+```
+
+#### removeSong(index)
+
+Remove a song at a specific index.
+
+```js
+Playlist.removeSong(0); // Removes the first song
+```
+
+#### clear()
+
+Remove all songs from the playlist.
+
+```js
+Playlist.clear();
+```
+
+#### getPosition()
+
+Get the index of the currently-playing song.
+
+```js
+Playlist.getPosition(); // => 0
+```
+
+#### setPosition(index)
+
+Switch the currently-playing song to the one at the specified index.
+
+```js
+Playlist.setPosition(0);
+```
+
+#### next()
+
+Move to the next song.
+
+```js
+Playlist.next();
+```
+
+#### prev()
+
+Move to the previous song.
+
+```js
+Playlist.prev();
+```
+
+#### template(function)
+
+Define a function to generate an HTML rendering of the playlist contents. The function passed here is used by the `data-playlist` module, which displays the contents of the playlist. The function is passed to `Array.prototype.map()`, so you have three parameters:
+
+- `song` (Object): metadata for a song.
+- `index` (Integer): index of the song within the playlist.
+- `playlist` (Array of Objects): playlist contents.
+
+The function can return anything you'd pass into the jQuery constructor. Most likely it's a string, but it could also be a jQuery element or a DOM element. It should be a *single element*, however, and not an array. This is because the element gets a click event for playing a specific song in the playlist.
+
+```js
+Playlist.template(function(song, index) {
+  return `<li>${index + 1}. ${song.title}</li>`;
+});
+```
+
+### Modules
+
+With the Playlist addon loaded, these additional modules can be used in your audio player.
+
+#### next
+
+Advances the playlist on click.
+
+```html
+<div id="player">
+  <button data-next>Next Song</button>
+  <audio data-audio></audio>
+</div>
+```
+
+#### prev
+
+...wait, what is the opposite of "advance"? Regress? Double back?
+
+```html
+<div id="player">
+  <button data-prev>Previous Song</button>
+  <audio data-audio></audio>
+</div>
+```
+
+#### playlist
+
+Renders the contents of the playlist. By default, it's just a bunch of `<li>`s with the title of each song. However, you can define your own template using the `Playlist.template()` method.
+
+```html
+<div id="player">
+  <ul data-playlist>
+    <!-- Keep this empty -->
+  </ul>
+  <audio data-audio></audio>
+</div>
+```
+
 ## Local Development
 
 ```bash
@@ -215,4 +346,4 @@ Run tests by opening `test/index.html` in your browser.
 
 ## Colophon
 
-Vivaldi is maintained by [Geoff Kimball](http://geoffkimball.com).
+Vivaldi is maintained by [Geoff Kimball](http://geoffkimball.com) and is MIT-licensed.
