@@ -62,6 +62,14 @@ function Player(element) {
 }
 
 /**
+ * Lifecycle hooks from external addons.
+ * @type Object.<String, Function[]>
+ */
+Player.hooks = {
+  init: []
+}
+
+/**
  * Initialize the player by finding UI elements and storing them in a UI object.
  */
 Player.prototype.init = function() {
@@ -116,6 +124,11 @@ Player.prototype.init = function() {
       }
     }.bind(this));
   }
+
+  // Run external lifecycle hooks
+  Player.hooks.init.map(function(hook) {
+    hook(this);
+  }.bind(this));
 }
 
 /**
@@ -475,6 +488,20 @@ Vivaldi.playlists = function() {
   }
 
   ENV_OPTIONS.playlists = true;
+}
+
+/**
+ * Add lifecycle hooks to Vivaldi.
+ * @param {Object} events - Hooks to add.
+ * @param {Function} events.init - Function to run when an event is initialized.
+ */
+Vivaldi.on = function(events) {
+  for (var name in events) {
+    // Only add the hook if it's a valid hook type
+    if (typeof Player.hooks !== 'undefined') {
+      Player.hooks[name].push(events[name]);
+    }
+  }
 }
 
 /**

@@ -109,9 +109,26 @@ describe('Player()', function() {
       });
     });
 
+    // @todo Replace with sinon.spy(). The Wi-fi doesn't work on this airplane!
+    it('runs init lifecycle hooks', function() {
+      var lifecycleCalled = false;
+      function lifecycle() {
+        lifecycleCalled = true;
+      };
+
+      Player.hooks.init.push(lifecycle);
+
+      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo(body);
+      var p = new Player($elem);
+      p.init();
+
+      expect(lifecycleCalled).to.be.true;
+    });
+
     afterEach(function() {
       $elem.remove();
-    })
+      Player.hooks.init = [];
+    });
   });
 
   describe('load()', function() {
@@ -559,5 +576,16 @@ describe('Vivaldi', function() {
     afterEach(function() {
       $elem.remove();
     })
+  });
+
+  describe('on()', function() {
+    it('adds lifecycle hooks to the Player', function() {
+      Vivaldi.on({
+        init: function() { return true }
+      });
+
+      expect(Player.hooks.init).to.have.lengthOf(1);
+      expect(Player.hooks.init[0]()).to.be.true;
+    });
   });
 });
