@@ -1,8 +1,4 @@
 describe('Playlist', function() {
-  afterEach(function() {
-    Playlist.clear();
-  });
-
   describe('getSongs()', function() {
     it('returns an array of songs', function() {
       expect(Playlist.getSongs()).to.be.an('array');
@@ -14,6 +10,10 @@ describe('Playlist', function() {
       Playlist.addSong({ url: 'test.mp3' });
       expect(Playlist.getSongs()).to.have.lengthOf(1);
     });
+
+    afterEach(function() {
+      Playlist.clear();
+    });
   });
 
   describe('removeSong()', function() {
@@ -22,6 +22,10 @@ describe('Playlist', function() {
       Playlist.removeSong(0);
       expect(Playlist.getSongs()).to.have.lengthOf(0);
     });
+
+    afterEach(function() {
+      Playlist.clear();
+    });
   });
 
   describe('clear()', function() {
@@ -29,6 +33,10 @@ describe('Playlist', function() {
       Playlist.addSong({ url: 'test.mp3' });
       Playlist.clear();
       expect(Playlist.getSongs()).to.have.lengthOf(0);
+    });
+
+    afterEach(function() {
+      Playlist.clear();
     });
   });
 
@@ -102,6 +110,27 @@ describe('Playlist', function() {
     });
 
     afterEach(function() {
+      Playlist.clear();
+    });
+  });
+});
+
+describe('Playlist Hooks', function() {
+  describe('init()', function() {
+    var $elem;
+
+    it('sets player to first song in playlist', function() {
+      $elem = $('<div data-player><audio data-audio></audio></div>').appendTo(body);
+      var p = new Player($elem);
+      var song = { url: 'test.mp3', title: 'Song' };
+      Playlist.addSong(song);
+      p.init();
+
+      expect(p.song).to.eql(song);
+    });
+
+    afterEach(function() {
+      $elem.remove();
       Playlist.clear();
     });
   });

@@ -47,6 +47,11 @@ describe('Player()', function() {
 
   describe('init()', function() {
     var $elem;
+    var originalHooks;
+
+    before(function() {
+      originalHooks = $.extend({}, Player.hooks);
+    });
 
     it('finds UI elements and stores them in an object', function() {
       var TEMPLATE = `
@@ -116,7 +121,7 @@ describe('Player()', function() {
         lifecycleCalled = true;
       };
 
-      Player.hooks.init.push(lifecycle);
+      Player.hooks.init = [lifecycle];
 
       $elem = $('<div data-player><audio data-audio></audio></div>').appendTo(body);
       var p = new Player($elem);
@@ -127,7 +132,7 @@ describe('Player()', function() {
 
     afterEach(function() {
       $elem.remove();
-      Player.hooks.init = [];
+      Player.hooks = originalHooks;
     });
   });
 
@@ -405,7 +410,7 @@ describe('Player Modules', function() {
       p.init();
 
       $(p.audio).on('durationchange', function() {
-        expect(p.ui['time-total']).to.have.text('0:08');
+        expect(p.ui['time-total']).to.have.text('0:10');
         done();
       });
 
@@ -579,6 +584,15 @@ describe('Vivaldi', function() {
   });
 
   describe('on()', function() {
+    var originalHooks;
+
+    beforeEach(function() {
+      originalHooks = $.extend({}, Player.hooks);
+      for (var i in Player.hooks) {
+        Player.hooks[i] = [];
+      }
+    });
+
     it('adds lifecycle hooks to the Player', function() {
       Vivaldi.on({
         init: function() { return true }
@@ -586,6 +600,10 @@ describe('Vivaldi', function() {
 
       expect(Player.hooks.init).to.have.lengthOf(1);
       expect(Player.hooks.init[0]()).to.be.true;
+    });
+
+    afterEach(function() {
+      Player.hooks = originalHooks;
     });
   });
 });

@@ -84,6 +84,14 @@ Vivaldi.Playlist = {
   }
 }
 
+Vivaldi.on({
+  init: function(player) {
+    if (SONGS.length) {
+      player.setSong(SONGS[0]);
+    }
+  }
+});
+
 Vivaldi.modules({
   /**
    * Moves the playlist to the next song on click.
